@@ -572,7 +572,8 @@ function exportCode(){
   var a={};
   SIMS.forEach(function(s){var list=S.data.attempts[s.id];if(!list)return;
     a[s.id]=list.map(function(at){var p=picksOf(s,at);return [at.date,p.map(function(x){return x.o}).join(""),p.map(function(x){return Math.round(x.ms/1000)}),at.enjoy,at.diff,at.note||"",at.secs]})});
-  return "CL3-"+b64e(JSON.stringify({v:3,n:S.name,a:a}));
+  var pr=pendingRun();
+  return "CL3-"+b64e(JSON.stringify({v:3,n:S.name,a:a,r:pr?[pr.i,pr.round,pr.picks.map(function(x){return x.o}).join(""),pr.orders.map(function(o){return o.join("")})]:null}));
 }
 function importCode(code){
   code=String(code||"").replace(/\s+/g,"");
@@ -585,7 +586,8 @@ function importCode(code){
       return scoreRun(run,x[5],x[0],x[6]);
     });
   });
-  return {name:String(o.n).replace(/[<>]/g,"").slice(0,40),data:data};
+  var run=null;if(o.r&&SIMS[o.r[0]])run={i:o.r[0],round:o.r[1],picks:o.r[2].split("").map(function(c){return {o:+c,ms:0}}),orders:o.r[3].map(function(x){return x.split("").map(Number)}),t0:Date.now()};
+  return {name:String(o.n).replace(/[<>]/g,"").slice(0,40),data:data,run:run};
 }
 function first(id){var a=S.data.attempts[id];return a&&a.length?a[0]:null}
 function doneCount(){return SIMS.filter(function(s){return first(s.id)}).length}
@@ -627,24 +629,28 @@ function viewWelcome(){
    (ppl.length?'<p class="small muted" style="margin-top:18px">Ya han participado en este dispositivo:</p><div class="chips">'+ppl.map(function(p,i){return '<button class="chip" type="button" data-p="'+i+'">'+esc(p)+'</button>'}).join("")+'</div>':'')+
   '</section>'+
   '<section class="panel"><h3>Antes de empezar</h3><p>Son diez simulaciones de 8 a 10 minutos cada una; no hace falta hacerlas todas el mismo día. Responde lo que realmente harías, no lo que crees que suena mejor: no se muestran puntajes mientras juegas y el resultado no es una nota. Tu avance se guarda automáticamente en este navegador, incluso si cierras a mitad de una simulación.</p><button class="link" id="guide" type="button">Guía para padres y orientadores</button></section>'+
-  '<section class="panel"><details class="gloss" style="background:transparent;border:0;padding:0;margin:0"><summary>¿Cambiaste de celular o se borró tu avance? Recupéralo con tu código</summary>'+
-  '<p class="small muted">Pega aquí el código de respaldo que guardaste.</p><textarea id="rcode" placeholder="CL3-..."></textarea><div class="err" id="rerr"></div>'+
-  '<button class="btn full" id="restore" type="button">Recuperar mi avance</button></details></section>');
+  '<section class="panel"><details class="gloss" style="background:transparent;border:0;padding:0;margin:0"><summary>¿Empezaste en otro equipo o se borró tu avance? Recupéralo con tu código</summary>'+RESTORE_FORM+'</details></section>');
   var input=document.getElementById("nm");
   function enter(n){n=String(n||"").replace(/[<>]/g,"").trim().slice(0,40);if(!n){document.getElementById("err").textContent="Escribe tu nombre para continuar.";input.focus();return}S.name=n;addPerson(n);sset("last",n);loadP();askPersist();viewHome()}
   on("go",function(){enter(input.value)});
   input.onkeydown=function(e){if(e.key==="Enter")enter(input.value)};
   Array.prototype.forEach.call(document.querySelectorAll("[data-p]"),function(b){b.onclick=function(){enter(ppl[+b.getAttribute("data-p")])}});
   on("guide",viewGuide);
+  wireRestore();
+}
+
+function wireRestore(){
   on("restore",function(){
     try{var r=importCode(document.getElementById("rcode").value);
       S.name=r.name;addPerson(r.name);sset("last",r.name);loadP();
       SIMS.forEach(function(s){var loc=S.data.attempts[s.id],inc=r.data.attempts[s.id];if(inc&&(!loc||!loc.length))S.data.attempts[s.id]=inc});
-      saveP();askPersist();viewHome();
+      saveP();
+      if(r.run&&!first(SIMS[r.run.i].id)&&!pendingRun())sset("run."+slug(S.name),r.run);
+      askPersist();viewHome();
     }catch(e){document.getElementById("rerr").textContent="El código no es válido. Revisa que lo hayas copiado completo, desde CL3- hasta el final."}
   });
 }
-
+var RESTORE_FORM='<p class="small muted">Pega aquí el código de respaldo que copiaste en el otro equipo.</p><textarea id="rcode" placeholder="CL3-..."></textarea><div class="err" id="rerr"></div><button class="btn full" id="restore" type="button">Recuperar mi avance</button>';
 function viewHome(){
   var d=doneCount();
   var html='<section class="panel"><h2>Hola, '+esc(S.name)+'</h2>'+
@@ -663,10 +669,11 @@ function viewHome(){
   });
   html+='</div>';
   if(d>0&&d<10)html+='<p class="small muted" style="margin-top:14px">El Career DNA Maestro se habilita al completar las diez. Puedes hacerlas en varios días; una o dos por sesión es lo ideal. Si repites una simulación, el reporte maestro conserva tu primer intento, que suele ser el más espontáneo.</p>';
-  if(d>0)html+='<section class="panel" style="margin-top:14px"><h3>Respaldo de tu avance</h3><p class="small">Tu avance se guarda en este celular y en este navegador. Si cambias de equipo, usas modo incógnito o se borra el historial, se pierde. Guarda este código en tus notas o envíaselo a tus padres; con él puedes recuperar todo en cualquier equipo.</p>'+
-   '<button class="btn ghost full" id="mkcode" type="button">Mostrar mi código de respaldo</button><div id="codebox" class="hide"><textarea class="reporttext" id="ccode" readonly style="min-height:90px;margin-top:10px"></textarea><button class="btn full" id="cpcode" type="button" style="margin-top:8px">Copiar código</button><p class="small muted" id="cnote"></p></div></section>';
+  html+='<section class="panel" style="margin-top:14px"><h3>Continuar en otro equipo</h3><p class="small">Tu avance se guarda en este equipo y en este navegador. Para seguir en otro, por ejemplo del celular a la computadora, copia tu código aquí, envíatelo por WhatsApp o correo y pégalo en el otro equipo. El código incluye también la simulación que tengas a medias.</p>'+
+   '<button class="btn ghost full" id="mkcode" type="button">Mostrar mi código de respaldo</button><div id="codebox" class="hide"><textarea class="reporttext" id="ccode" readonly style="min-height:90px;margin-top:10px"></textarea><button class="btn full" id="cpcode" type="button" style="margin-top:8px">Copiar código</button><p class="small muted" id="cnote"></p></div>'+
+   '<details class="gloss" style="margin-top:14px"><summary>Tengo un código de otro equipo</summary>'+RESTORE_FORM+'</details></section>';
   mount(html);
-  on("master",viewMaster);
+  on("master",viewMaster);wireRestore();
   on("resume",function(){var r=pendingRun();S.run={i:r.i,round:r.round,picks:r.picks,orders:r.orders,t:Date.now(),t0:r.t0,sel:null};if(r.round<5)viewRound();else viewReflect()});
   on("discard",function(){clearRun();viewHome()});
   on("mkcode",function(){document.getElementById("ccode").value=exportCode();document.getElementById("codebox").classList.remove("hide")});
