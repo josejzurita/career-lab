@@ -606,7 +606,7 @@ function level(v){return v>=.75?"muy marcada":v>=.55?"marcada":v>=.35?"presente"
 function renderWho(){
   var w=document.getElementById("who");
   w.innerHTML=S.name?'<span>'+esc(S.name)+'</span><button class="link" id="swap" type="button">Cambiar</button>':'<button class="link" id="guideTop" type="button">Guía para padres</button>';
-  on("swap",function(){S.run=null;S.name="";viewWelcome()});
+  on("swap",function(){S.run=null;S.name="";try{localStorage.removeItem(NS+"last")}catch(e){}viewWelcome()});
   on("guideTop",viewGuide);
 }
 document.getElementById("brand").onclick=function(){
@@ -631,14 +631,14 @@ function viewWelcome(){
   '<p class="small muted">Pega aquí el código de respaldo que guardaste.</p><textarea id="rcode" placeholder="CL3-..."></textarea><div class="err" id="rerr"></div>'+
   '<button class="btn full" id="restore" type="button">Recuperar mi avance</button></details></section>');
   var input=document.getElementById("nm");
-  function enter(n){n=String(n||"").replace(/[<>]/g,"").trim().slice(0,40);if(!n){document.getElementById("err").textContent="Escribe tu nombre para continuar.";input.focus();return}S.name=n;addPerson(n);loadP();askPersist();viewHome()}
+  function enter(n){n=String(n||"").replace(/[<>]/g,"").trim().slice(0,40);if(!n){document.getElementById("err").textContent="Escribe tu nombre para continuar.";input.focus();return}S.name=n;addPerson(n);sset("last",n);loadP();askPersist();viewHome()}
   on("go",function(){enter(input.value)});
   input.onkeydown=function(e){if(e.key==="Enter")enter(input.value)};
   Array.prototype.forEach.call(document.querySelectorAll("[data-p]"),function(b){b.onclick=function(){enter(ppl[+b.getAttribute("data-p")])}});
   on("guide",viewGuide);
   on("restore",function(){
     try{var r=importCode(document.getElementById("rcode").value);
-      S.name=r.name;addPerson(r.name);loadP();
+      S.name=r.name;addPerson(r.name);sset("last",r.name);loadP();
       SIMS.forEach(function(s){var loc=S.data.attempts[s.id],inc=r.data.attempts[s.id];if(inc&&(!loc||!loc.length))S.data.attempts[s.id]=inc});
       saveP();askPersist();viewHome();
     }catch(e){document.getElementById("rerr").textContent="El código no es válido. Revisa que lo hayas copiado completo, desde CL3- hasta el final."}
@@ -911,7 +911,7 @@ function viewGuide(){
 }
 
 
-viewWelcome();
+var last=sget("last");if(last){S.name=last;loadP();askPersist();viewHome()}else viewWelcome();
 })();
 </script>
 </body>
