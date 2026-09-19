@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#18263a">
+<title>Career Lab | Laboratorio de decisiones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#e9eeec; --surface:#ffffff; --ink:#18263a; --muted:#566574; --line:#cfd8d6;
+  --cobalt:#2446c4; --cobalt-soft:#e3e9fb; --amber:#b87a0a; --amber-soft:#fbf1dc; --ok:#1f7a55; --ok-soft:#e1f2ea;
+  --radius-l:20px; --radius-m:12px;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1722; --surface:#172231; --ink:#e7edf3; --muted:#9aabbb; --line:#2b3a4c;
+  --cobalt:#7d98ff; --cobalt-soft:#1f2c4d; --amber:#e3a93b; --amber-soft:#33291a; --ok:#5fcf9d; --ok-soft:#173327;}}
+:root[data-theme="dark"]{
+  --paper:#0f1722; --surface:#172231; --ink:#e7edf3; --muted:#9aabbb; --line:#2b3a4c;
+  --cobalt:#7d98ff; --cobalt-soft:#1f2c4d; --amber:#e3a93b; --amber-soft:#33291a; --ok:#5fcf9d; --ok-soft:#173327;}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 18px}
+.brand{font-weight:800;font-stretch:118%;letter-spacing:-.01em;font-size:18px;color:var(--ink);background:none;border:0;padding:0;cursor:pointer}
+.brand span{color:var(--cobalt)}
+.who{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.link{background:none;border:0;color:var(--cobalt);font:inherit;font-size:14px;cursor:pointer;padding:6px 2px;text-decoration:underline;text-underline-offset:3px}
+h1,h2,h3{font-stretch:115%;letter-spacing:-.015em;line-height:1.12;margin:0}
+h1{font-size:clamp(34px,8vw,54px);font-weight:850}
+h2{font-size:clamp(25px,5.4vw,34px);font-weight:800}
+h3{font-size:19px;font-weight:750}
+p{margin:.6em 0}
+.lede{font-size:19px;color:var(--muted);max-width:60ch}
+.muted{color:var(--muted)}.small{font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-l);padding:22px;margin:0 0 14px}
+.hero{padding:28px 24px 26px}
+label.f{display:block;font-weight:650;margin:22px 0 6px}
+input[type=text],textarea{width:100%;font:inherit;font-size:18px;padding:14px;border:1.5px solid var(--line);border-radius:var(--radius-m);background:var(--surface);color:var(--ink)}
+textarea{font-size:16px;min-height:96px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+.btn{font:inherit;font-weight:700;min-height:50px;border-radius:var(--radius-m);padding:12px 18px;cursor:pointer;border:1.5px solid var(--ink);background:var(--ink);color:var(--surface)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.full{width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1 1 180px}
+.err{color:#b3261e;font-size:14px;min-height:1.2em}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:8px 14px;cursor:pointer}
+/* home */
+.progressline{display:flex;gap:4px;margin:14px 0 4px}.progressline i{flex:1;height:6px;border-radius:6px;background:var(--line)}.progressline i.on{background:var(--ok)}
+.sims{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.sims{grid-template-columns:1fr 1fr}}
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.sim .n{font-weight:800;font-stretch:125%;color:var(--muted);font-size:14px}
+.sim.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.status{font-size:13px;font-weight:650;color:var(--muted)}.sim.done .status{color:var(--ok)}
+.sim .row{margin-top:auto;padding-top:8px}.sim .btn{min-height:44px;padding:9px 14px;font-size:15px}
+/* play */
+.simhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.steps{display:flex;gap:5px;margin:12px 0 0}.steps i{flex:1;height:5px;border-radius:5px;background:var(--line)}.steps i.on{background:var(--cobalt)}
+.brief{border-left:4px solid var(--cobalt)}
+.situ{padding:26px 22px}
+.tag{font-size:14px;font-weight:700;color:var(--cobalt);margin-bottom:8px}
+.body{font-size:18px;margin:14px 0 0;max-width:62ch}
+.pressure{margin:16px 0 4px;padding:10px 14px;border-radius:10px;background:var(--amber-soft);color:var(--ink);font-size:15px;border-left:4px solid var(--amber)}
+.gt{text-decoration:underline dotted;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.gloss{margin:14px 0 0;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:15px;background:var(--paper)}
+.gloss summary{cursor:pointer;font-weight:650;color:var(--cobalt)}
+.gloss p{margin:8px 0}
+.opts{display:grid;gap:10px;margin:18px 0 6px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:12px;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:15px 14px;cursor:pointer;transition:border-color .12s,background .12s}
+.opt .k{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--line);display:grid;place-items:center;font-weight:800;font-stretch:120%;font-size:15px}
+.opt b{display:block;font-weight:700;line-height:1.3}
+.opt span.d{display:block;color:var(--muted);font-size:15px;margin-top:3px;line-height:1.4}
+.opt[aria-pressed="true"]{border-color:var(--cobalt);background:var(--cobalt-soft)}
+.opt[aria-pressed="true"] .k{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+/* reflection */
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.scale button{font:inherit;font-weight:750;min-height:48px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.scale button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.scalelbl{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:4px}
+/* results */
+.bar{margin:12px 0}.bar .l{display:flex;justify-content:space-between;font-size:15px;gap:8px}.bar .t{height:10px;border-radius:10px;background:var(--line);overflow:hidden;margin-top:5px}.bar .f{height:100%;background:var(--cobalt);border-radius:10px}
+.bar .lvl{color:var(--muted);font-size:13px;white-space:nowrap}
+.axis{margin:16px 0}.axis .poles{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
+.axis .track{position:relative;height:8px;border-radius:8px;background:linear-gradient(90deg,var(--line),var(--line));margin:7px 0 3px}
+.axis .track::after{content:"";position:absolute;left:50%;top:-4px;width:1.5px;height:16px;background:var(--muted);opacity:.5}
+.axis .dot{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--cobalt);border:3px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 0 0 1.5px var(--cobalt)}
+.axis .nm{font-weight:650;font-size:15px}
+.interp{font-size:17px;max-width:64ch}
+.dlist{margin:6px 0 0;padding:0;list-style:none;counter-reset:d}
+.dlist li{counter-increment:d;padding:10px 0 10px 34px;position:relative;border-top:1px solid var(--line);font-size:15px}
+.dlist li::before{content:counter(d);position:absolute;left:0;top:10px;font-weight:800;color:var(--muted);font-stretch:120%}
+.dlist small{color:var(--muted)}
+.reporttext{width:100%;min-height:180px;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px}
+.fam{padding:16px 0;border-top:1px solid var(--line)}.fam:first-of-type{border-top:0}
+.fam .acad{font-size:14px;color:var(--muted)}
+.flag{padding:12px 14px;border-radius:10px;background:var(--cobalt-soft);margin:8px 0;font-size:15px}
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px;min-height:110px;background:var(--surface)}
+.q1{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.ql{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;line-height:1.3}
+.qi{margin:6px 0;line-height:1.25}.qi b{display:block;font-size:14.5px}.qi span{font-size:12.5px;color:var(--muted)}
+.qe{font-size:13px;color:var(--muted)}
+.qaxis{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px}
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.chart text{font-family:inherit;fill:var(--ink)}
+.cols{display:grid;gap:12px}@media(min-width:640px){.cols{grid-template-columns:1fr 1fr}}
+.foot{text-align:center;color:var(--muted);font-size:13px;padding:22px 8px}
+
+/* modo incrustado (Google Sites): tipografía compacta y desplazamiento interno */
+html.embed,html.embed body{height:100%}
+html.embed body{overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:16px}
+html.embed .wrap{padding:10px 12px 28px}
+html.embed .top{padding:2px 0 10px}
+html.embed h1{font-size:clamp(26px,7vw,40px)}
+html.embed h2{font-size:clamp(21px,5.5vw,28px)}
+html.embed .lede{font-size:16px}
+html.embed .hero{padding:20px 18px}
+html.embed .panel{padding:16px;border-radius:16px}
+html.embed .situ{padding:18px 16px}
+html.embed .body{font-size:16px}
+html.embed .opt{padding:12px}
+.hide{display:none!important}.printonly{display:none}@media print{.printonly{display:block}}
+@media(prefers-reduced-motion:no-preference){.enter{animation:rise .28s ease-out}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}}
+@media print{
+  :root{--paper:#fff;--surface:#fff;--ink:#111;--line:#ccc}
+  body{font-size:12pt}.noprint,.top{display:none!important}.panel{border:0;padding:8px 0;break-inside:avoid}.wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top noprint">
+    <button class="brand" id="brand" type="button">Career <span>Lab</span></button>
+    <div class="who" id="who"></div>
+  </header>
+  <main id="app"></main>
+  <div class="foot noprint">Career Lab v3. Exploración vocacional basada en decisiones simuladas. Los resultados se guardan solo en este navegador.</div>
+</div>
+
+<script>
+try{if(window.self!==window.top)document.documentElement.classList.add("embed")}catch(e){document.documentElement.classList.add("embed")}
+(function(){
+"use strict";
+
+/* ============ MODELO ============
+   Tres señales independientes:
+   1) Career DNA de dominio: 6 dimensiones por simulación, normalizadas por el máximo alcanzable.
+   2) Estilo transversal: 5 ejes bipolares (ninguno de los polos es mejor).
+   3) Criterio: 2 situaciones por simulación contienen una trampa de razonamiento (q: 0, 1 o 2).
+   Más interés declarado (disfrute 1-5) al cerrar cada simulación.
+   x = [ana, rie, pla, peo, cre] con valores -1, 0 o 1. */
+
+var AX=[
+ {k:"ana",name:"Análisis o acción",neg:"actuar rápido y aprender en el camino",pos:"analizar antes de actuar"},
+ {k:"rie",name:"Riesgo",neg:"proteger lo que ya existe",pos:"apostar por el potencial"},
+ {k:"pla",name:"Horizonte",neg:"asegurar resultados inmediatos",pos:"pensar en el largo plazo"},
+ {k:"peo",name:"Foco",neg:"apoyarse en números y sistemas",pos:"poner a las personas en el centro"},
+ {k:"cre",name:"Modo",neg:"ejecutar y optimizar lo conocido",pos:"explorar caminos nuevos"}
+];
+var CAP={cuant:"Razonamiento cuantitativo",evid:"Análisis y evidencia",sist:"Pensamiento estratégico y sistémico",expe:"Creatividad y experimentación",pers:"Personas y comunicación",juic:"Juicio frente al riesgo y la ética",ejec:"Ejecución y decisión"};
+var CAPVERB={cuant:"cuantificar",evid:"analizar",sist:"diseñar estrategias",expe:"experimentar",pers:"comunicar",juic:"evaluar riesgos",ejec:"decidir"};
+
+function O(t,d,w,x,q){return {t:t,d:d,w:w,x:x,q:q}}
+function R(kind,tag,title,body,pressure,opts){return {kind:kind,tag:tag,title:title,body:body,pressure:pressure,opts:opts}}
+
+var GLOSS={
+ "margen":"Lo que te queda de cada venta después de pagar lo que cuesta producirla.",
+ "inversionista":"Persona que pone dinero en tu empresa a cambio de ser dueña de una parte.",
+ "acciones":"Pedacitos de una empresa que se compran y venden. Su precio sube y baja; a largo plazo suelen ganar más que un banco, pero con más sustos.",
+ "plazo fijo":"Dinero que dejas en el banco por un tiempo acordado. No pierde valor, pero gana poco.",
+ "intereses":"Lo que te paga el banco por dejarle tu dinero.",
+ "copias de seguridad":"Copias guardadas de la información, por si la original se pierde o se daña.",
+ "verificación en dos pasos":"Además de la contraseña, te piden un código que llega a tu celular.",
+ "virus":"Programa dañino que entra a una computadora sin permiso.",
+ "comité de ética":"Grupo de expertos que ayuda a decidir casos difíciles donde hay valores en juego.",
+ "hectárea":"Un terreno de 100 por 100 metros, más o menos una manzana grande.",
+ "plaga":"Insectos u hongos que dañan los cultivos.",
+ "control biológico":"Usar insectos u organismos naturales que se comen la plaga, en lugar de químicos.",
+ "residuos":"Restos de químicos que quedan en la fruta. Los países compradores ponen límites estrictos.",
+ "certificación orgánica":"Sello que garantiza que se cultivó sin químicos sintéticos. Permite vender más caro.",
+ "baterías":"Guardan la energía de los paneles para usarla de noche o cuando no hay sol.",
+ "retorno":"Lo que ganas con una inversión comparado con lo que pusiste."
+};
+
+var SIMS=[
+{id:"neg",title:"Negocios y estrategia",short:"Negocios",sub:"Crea un negocio y defiéndelo cuando aparecen problemas.",
+ role:"Eres cofundador de StudyMate, una app que conecta alumnos de colegio con tutores universitarios.",
+ context:"Tienes $25.000 entre ahorros y un préstamo de tu familia. Alcanza para funcionar unos seis meses.",
+ dims:["Visión estratégica","Números del negocio","Análisis","Creatividad","Riesgo","Liderazgo"],
+ caps:["sist","cuant","evid","expe","juic","pers"],
+ rounds:[
+ R("d","Arranque","¿Cómo consigues tus primeros usuarios?","La app ya funciona. Ahora necesitas que la gente la use, con un presupuesto que no permite muchos errores.","Tu socio quiere una decisión hoy.",[
+  O("Un solo colegio, a fondo","No pasar a otro colegio hasta que 4 de cada 10 alumnos usen la app.",[2,1,2,0,0,1],[1,-1,1,0,-1]),
+  O("Toda la ciudad por redes","Publicidad en TikTok e Instagram para llegar a alumnos de muchos colegios a la vez.",[0,0,0,2,3,1],[-1,1,0,0,1]),
+  O("Venderle al colegio, no al alumno","Convencer a los rectores de pagar un año completo. Cuesta cerrar la venta, pero es dinero seguro.",[3,2,1,0,0,0],[0,-1,1,-1,0]),
+  O("Probar tres ideas a la vez","Tutorías, apuntes compartidos y preparación para la universidad, con $3.000 cada una. Te quedas con la que funcione.",[0,0,2,3,1,0],[-1,0,0,0,1])]),
+ R("c","Números","¿Este negocio gana dinero?","Cada clase le cuesta $10 al alumno y al tutor le pagas $7. Para conseguir un alumno nuevo gastas $12 en publicidad. En promedio, cada alumno toma 3 clases y no vuelve.","Tu {{inversionista}} pregunta por qué se acaba la plata si las ventas suben.",[
+  O("Cada alumno nuevo nos hace perder plata","Hay que arreglar eso antes de pensar en crecer.",[1,3,2,0,0,0],[1,-1,0,-1,0],2),
+  O("Hay que crecer rápido","Con más alumnos, la publicidad se abaratará sola.",[1,0,0,1,3,1],[-1,1,0,0,0],0),
+  O("Subir el precio a $13","Así cada clase deja $6 en lugar de $3.",[1,2,1,0,1,1],[0,0,0,-1,0],1),
+  O("Está bien así","Ganar $3 de cada $10 es un {{margen}} normal.",[1,1,1,0,1,0],[-1,0,0,0,-1],0)]),
+ R("d","Competencia","Llega un gigante","Una empresa grande, con 20 veces tu dinero, lanza una app parecida, 25% más barata y con mucha publicidad.","Tus tutores empiezan a preguntar si deberían cambiarse.",[
+  O("Ser mejores, no más baratos","Tutores verificados, seguimiento de notas y trato cercano.",[3,0,0,2,0,1],[0,-1,1,1,0]),
+  O("Proponerles una alianza o venderles","Negociar ahora, mientras tienes usuarios que les interesan.",[1,3,1,0,0,1],[0,-1,-1,-1,0]),
+  O("Irte a un espacio que no les interesa","Por ejemplo, preparar a alumnos para becas en el extranjero.",[2,0,1,2,1,0],[0,1,1,0,1]),
+  O("Bajar el precio y aguantar","Recortar gastos al máximo y competir de frente.",[0,2,0,0,3,1],[-1,1,-1,-1,-1])]),
+ R("d","Equipo","Tus socios no se ponen de acuerdo","Tu socio de operaciones quiere ahorrar y ordenar la empresa. Tu socia de marketing quiere lanzar cosas nuevas. Los dos dicen que se van si no los apoyas.","La reunión es en una hora.",[
+  O("Definir la meta del año y decidir con base en ella","Que la meta decida, no quién presiona más.",[3,0,1,0,0,2],[1,0,1,-1,0]),
+  O("Sentarlos juntos a buscar una solución","Que los dos se comprometan con lo que salga.",[2,0,0,1,0,3],[0,0,0,1,1]),
+  O("Este año ahorrar, el próximo innovar","Ordenar las prioridades en el tiempo.",[1,3,1,0,0,1],[0,-1,0,-1,-1]),
+  O("Un poco de dinero aparte para lo nuevo","Proteger las ideas nuevas sin descuidar lo demás.",[1,1,0,2,2,0],[0,1,1,0,1])]),
+ R("c","Recursos","Solo alcanza para una cosa","Ya gastaste $6.000 en una función de la app que no está lista. Terminarla cuesta $3.000 más y esperas que te deje $2.000. Otra idea nueva cuesta $3.000 y esperas que te deje $4.500.","El programador que hizo la primera te pide no abandonarla.",[
+  O("Terminar la primera","Ya invertiste $6.000; abandonarla sería perderlos.",[0,0,0,0,1,2],[-1,0,0,0,0],0),
+  O("Hacer la idea nueva","Es la que mejor usa el dinero que te queda.",[1,3,2,0,0,0],[1,0,1,-1,0],2),
+  O("Terminar la primera, por el equipo","Abandonarla desanimaría a quien trabajó en ella.",[0,0,0,0,0,3],[0,-1,0,1,0],1),
+  O("Poner $1.500 en cada una","Mantener las dos posibilidades vivas.",[0,1,0,1,1,0],[0,-1,0,0,0],0)])
+ ]},
+
+{id:"fin",title:"Finanzas y economía",short:"Finanzas",sub:"Decide qué hacer con el dinero de otros y con el de una ciudad.",
+ role:"Trabajas en una firma que asesora a familias y a municipios sobre cómo manejar su dinero.",
+ context:"Tus clientes confían en ti, pero van a revisar cada recomendación. Un error aquí lo paga otra persona.",
+ dims:["Cálculo","Riesgo y retorno","Evidencia","Incentivos","Visión de sistema","Disciplina"],
+ caps:["cuant","juic","evid","sist","sist","ejec"],
+ rounds:[
+ R("d","Familia","$100.000 para la universidad","La familia Salazar quiere pagar la universidad de sus dos hijos. La mayor entra en 2 años; el menor, en 7.","La madre te pide una propuesta para mañana.",[
+  O("Dos bolsillos distintos","Lo de la mayor en un {{plazo fijo}}; lo del menor, más en {{acciones}}.",[2,2,0,0,0,2],[1,-1,1,0,0]),
+  O("Mitad banco, mitad acciones","Simple y fácil de mantener sin tocarlo.",[0,2,0,0,1,3],[0,-1,1,0,-1]),
+  O("Casi todo en acciones","En siete años pueden ganar bastante más, aunque haya caídas en el camino.",[1,3,0,0,2,0],[0,1,1,0,0]),
+  O("Todo a plazo fijo","Gana poco, pero es imposible perder.",[1,2,0,0,0,3],[0,-1,-1,0,-1])]),
+ R("c","Cálculo","Dos opciones del banco","Opción A: el banco te paga 8% cada año y esos {{intereses}} también van ganando intereses, durante 9 años. Opción B: a los 10 años te devuelven el doble de lo que pusiste. Los dos bancos son igual de seguros.","El cliente quiere una respuesta clara.",[
+  O("A","Es la que más conviene, aunque 8% parezca poco.",[3,1,1,0,0,0],[1,0,0,-1,0],2),
+  O("Da igual","Las dos terminan duplicando el dinero más o menos.",[1,1,0,0,0,1],[0,0,0,0,0],1),
+  O("B","8% durante 9 años es 72%, menos que el 100% de B.",[1,1,0,0,0,1],[-1,0,0,-1,0],0),
+  O("No se puede saber","Faltan datos sobre comisiones e impuestos.",[0,1,2,0,0,0],[1,-1,0,0,0],1)]),
+ R("d","Inversión","¿Cuál empresa eliges?","La empresa A crece muy rápido, pero todavía pierde dinero. La empresa B crece poco, pero gana dinero todos los años y reparte ganancias a sus dueños. Solo puedes elegir una.","El comité se reúne en dos días.",[
+  O("A","Si sigue creciendo así, en unos años será enorme.",[0,3,0,0,2,0],[0,1,1,0,1]),
+  O("B","Prefieres lo comprobado a lo prometido.",[0,2,1,0,0,2],[0,-1,-1,-1,-1]),
+  O("Pedir tiempo para hacer números","Calcular cuánto podría ganar cada una y cuánto cuesta.",[3,0,2,0,0,0],[1,0,0,-1,0]),
+  O("Un poco en A, la mayor parte en B","Aprovechar lo que A podría lograr sin depender de ella.",[1,2,0,0,0,2],[0,-1,0,0,0])]),
+ R("c","Municipio","Más ratas cazadas, más ratas en la calle","Para acabar con una plaga, el municipio paga $1 por cada rata capturada. Seis meses después se entregan más ratas que nunca, y también hay más ratas en la ciudad.","El alcalde quiere saber qué salió mal.",[
+  O("La plaga es más grande de lo que se creía","Subir el pago para atrapar más.",[0,0,1,0,0,1],[-1,0,-1,0,0],0),
+  O("Alguien podría estar criando ratas para cobrar","Pagar por resultados: menos ratas por barrio, no por rata entregada.",[0,0,1,3,2,0],[1,0,1,-1,0],2),
+  O("Contratar a más empresas","Una sola no alcanza.",[0,1,0,0,1,0],[-1,1,0,0,0],0),
+  O("Revisar las capturas por barrio y fecha","Buscar un patrón en los datos.",[1,0,3,0,0,0],[1,-1,0,-1,0],1)]),
+ R("d","Emergencia","El agua sube de precio","Tras una inundación, una botella de agua pasó de $0,50 a $2. El concejo quiere prohibir que se venda a más de $0,50.","La votación es esta tarde.",[
+  O("Poner el precio máximo","Nadie debería aprovecharse de una emergencia.",[0,1,0,1,1,2],[-1,-1,-1,1,0]),
+  O("No poner límite, pero regalar agua a las familias pobres","Que el precio alto traiga más agua y nadie se quede sin ella.",[0,1,0,3,2,0],[1,0,0,1,0]),
+  O("No intervenir","El precio alto hará que lleguen camiones de otras ciudades.",[0,1,0,3,1,0],[0,1,0,-1,-1]),
+  O("Medir primero cuánta agua falta","Decidir con datos de la emergencia.",[2,0,3,0,0,0],[1,-1,0,-1,0])])
+ ]},
+
+{id:"data",title:"Detective de datos",short:"Datos",sub:"Descubre la historia real detrás de los números.",
+ role:"Eres analista de datos en Café Norte, una cadena de 12 cafeterías.",
+ context:"La gerencia quiere decidir con datos. Pero los datos no siempre dicen lo que parecen decir.",
+ dims:["Análisis","Patrones","Números","Duda sana","Comunicación","Criterio"],
+ caps:["evid","evid","cuant","evid","pers","juic"],
+ rounds:[
+ R("d","Ventas","Las ventas subieron 20%","Este trimestre se vendió 20% más que el anterior. El gerente está feliz y quiere presentarlo a los dueños.","Tienes un día.",[
+  O("Separar de dónde vino el aumento","¿Se vendió más cantidad, se subieron precios o solo creció un local?",[3,1,2,0,0,0],[1,0,0,-1,0]),
+  O("Compararlo con el mismo trimestre del año pasado","Quizás siempre se vende más en esta época.",[0,2,0,2,0,2],[1,-1,0,-1,0]),
+  O("Hablar con tres administradores de local","Entender qué cambió en el día a día.",[2,1,0,0,3,0],[0,0,0,1,0]),
+  O("Preparar una buena presentación del logro","El equipo necesita buenas noticias y el dato es real.",[1,1,0,0,4,0],[-1,0,-1,1,0])]),
+ R("c","Publicidad","¿La publicidad funciona?","En los últimos dos años, los meses con más publicidad fueron también los meses con más ventas. El jefe de marketing quiere duplicar el gasto en publicidad.","Quiere tu aprobación esta semana.",[
+  O("Aprobar","Dos años de datos apuntan a lo mismo.",[0,2,0,0,1,0],[-1,1,0,0,0],0),
+  O("Revisar si esos meses tienen otra cosa en común","Vacaciones, feriados o cambios de precio.",[0,0,1,3,0,2],[1,-1,0,-1,0],2),
+  O("Probar en 4 locales y comparar","Más publicidad solo en algunos, frente a otros parecidos sin cambios.",[2,0,2,0,0,2],[1,0,0,-1,1],2),
+  O("Subir solo un 20%","Un aumento prudente mientras se ve qué pasa.",[1,0,0,1,1,1],[0,-1,0,0,0],1)]),
+ R("c","Promedio","Un número que confunde","En promedio, cada cliente gasta $38 por visita. Pero si ordenas a todos los clientes del que menos gasta al que más gasta, el que queda en la mitad gasta $9. Hay una empresa que compra pedidos de $4.000 para sus oficinas.","Los dueños usarán tu número para poner metas.",[
+  O("Decir que el cliente típico gasta $38","Es el promedio real.",[0,0,1,0,1,0],[-1,0,0,0,0],0),
+  O("Decir que el cliente típico gasta unos $9 y mostrar aparte a la empresa","Que cada número describa a quien corresponde.",[0,0,3,0,2,1],[1,0,0,0,0],2),
+  O("Borrar a la empresa de los datos","No se parece a los demás clientes.",[0,2,1,0,0,1],[0,0,0,-1,-1],1),
+  O("Buscar más empresas como esa","Lo interesante no es el promedio, es ese cliente.",[2,3,0,0,1,0],[0,1,1,0,1],1)]),
+ R("d","Menú","Solo puedes revisar una fuente","Debes recomendar qué productos cambiar en el menú del próximo año.","Solo hay tiempo para analizar una a fondo.",[
+  O("Las ventas de cada producto en dos años","Lo que la gente realmente compró.",[2,0,2,0,0,2],[1,-1,-1,-1,-1]),
+  O("Comentarios y reseñas en redes","Qué emociona o molesta a los clientes, con sus propias palabras.",[0,3,0,1,2,0],[0,0,0,1,1]),
+  O("Una encuesta a gente que no viene","Entender por qué otros no entran.",[1,1,0,2,0,2],[1,0,1,1,0]),
+  O("Probar 3 productos nuevos","Venderlos dos semanas en dos locales y medir.",[2,2,1,0,0,1],[-1,1,0,0,1])]),
+ R("d","Reunión","Tres minutos con la gerente","Encontraste seis cosas importantes. La gerente tiene tres minutos entre dos reuniones.","Entras en cinco minutos.",[
+  O("Una conclusión, tres razones y qué hacer","Lo esencial y la acción.",[1,0,0,0,3,2],[0,0,0,0,-1]),
+  O("Un tablero para que ella explore después","Que mire los datos a su ritmo.",[2,2,1,0,1,0],[1,0,0,-1,1]),
+  O("Empezar por lo incómodo","No es lo más grande, pero es el riesgo que nadie está viendo.",[0,0,0,3,1,2],[0,1,1,0,0]),
+  O("Contarlo con la historia de un cliente real","Mostrar los datos a través de una persona.",[1,2,0,0,3,0],[0,0,0,1,1])])
+ ]},
+
+{id:"ia",title:"IA y programación",short:"IA",sub:"Usa inteligencia artificial para resolver un problema real.",
+ role:"Un colegio de 1.200 alumnos te contrata para usar inteligencia artificial.",
+ context:"El rector está entusiasmado; los profesores, no tanto. Hay poco dinero y muchas expectativas.",
+ dims:["Definir el problema","Automatización","Experimentación","Visión de sistema","Juicio humano","Uso responsable"],
+ caps:["sist","ejec","expe","sist","pers","juic"],
+ rounds:[
+ R("d","Problema","¿Qué construyes primero?","El rector dice: «Quiero usar IA». Tienes seis semanas.","La reunión con el rector es mañana a las 8:00.",[
+  O("Un tutor de matemáticas con IA","Puede ayudar mucho, aunque a veces se equivoque o los alumnos dependan de él.",[1,1,3,1,0,0],[0,1,1,1,1]),
+  O("Que la IA corrija las pruebas de opción múltiple","Ahorra horas a los profesores con poco riesgo.",[2,3,0,1,0,0],[0,-1,-1,-1,-1]),
+  O("Observar una semana dónde se pierde más tiempo","Decidir después de ver el trabajo real.",[3,0,0,2,1,0],[1,-1,1,1,0]),
+  O("Un sistema que avise qué alumnos podrían perder el año","Para que un profesor los ayude a tiempo.",[1,0,0,2,1,2],[0,1,1,1,0])]),
+ R("c","Error","El asistente inventa respuestas","Un asistente con IA responde preguntas de los padres sobre pagos, fechas y requisitos. Acierta 96 de cada 100 veces, pero las otras 4 inventa datos con total seguridad.","Secretaría está saturada y quiere usarlo ya.",[
+  O("Usarlo ya","96 de 100 es mejor que hacer esperar días a los padres.",[0,2,1,0,0,0],[-1,1,-1,0,0],0),
+  O("Que solo responda lo que tiene escrito en documentos oficiales","Lo demás lo contesta una persona.",[0,0,0,1,2,3],[0,-1,0,1,0],2),
+  O("Usarlo con un aviso: «puede equivocarse»","Así los padres quedan advertidos.",[0,2,1,0,0,1],[-1,0,0,0,0],1),
+  O("Averiguar qué preguntas causan esos 4 errores","Corregir la causa antes de lanzarlo.",[2,0,3,1,0,0],[1,0,0,-1,0],2)]),
+ R("d","Prototipo","Dos semanas para mostrar algo","Las matrículas consumen 200 horas de trabajo al mes en secretaría.","Los directivos quieren ver algo en su próxima reunión.",[
+  O("Automatizar solo el paso más repetitivo y medir","Pequeño, rápido y fácil de evaluar.",[1,2,3,0,0,0],[-1,-1,0,-1,0]),
+  O("Rediseñar el proceso antes de usar IA","Quizás la mitad de los pasos sobran.",[2,1,0,3,0,0],[1,0,1,0,1]),
+  O("Construir el sistema completo de una vez","Hacerlo bien desde el inicio, sin parches.",[1,3,0,2,0,0],[0,1,1,-1,0]),
+  O("Enseñar a secretaría a usar IA","Que las personas decidan dónde les sirve.",[0,0,2,0,3,1],[0,-1,0,1,0])]),
+ R("c","Datos","¿Qué información usas?","Para avisar qué alumnos podrían perder el año tienes acceso a notas, asistencia, dirección de la casa, ingresos de los padres y reportes del psicólogo.","El proveedor dice que con más datos la IA acierta más.",[
+  O("Usar todo","Más datos, mejores predicciones.",[0,2,2,0,0,0],[-1,1,0,-1,0],0),
+  O("Empezar solo con notas y asistencia","Usar lo necesario y ver si alcanza.",[2,0,1,0,0,3],[0,-1,0,0,0],2),
+  O("Usar todo, pero que solo lo vean los directivos","Proteger la información limitando quién la ve.",[0,1,0,2,0,1],[0,0,0,-1,0],1),
+  O("Preguntar antes a padres y a un {{comité de ética}}","Decidir juntos qué es aceptable usar.",[0,0,0,1,3,2],[1,-1,1,1,0],2)]),
+ R("d","Resultados","El piloto funcionó","La herramienta redujo 35% el tiempo de trabajo de oficina. Los directivos preguntan qué sigue.","Quieren una recomendación, no una lista de opciones.",[
+  O("Usar el tiempo ahorrado en atender mejor a las familias","El mismo equipo, mejor servicio.",[0,0,0,2,3,1],[0,0,1,1,0]),
+  O("Llevarlo poco a poco a los otros 3 colegios del grupo","Repetir lo que ya se probó.",[0,2,2,2,0,0],[0,0,1,-1,0]),
+  O("Reducir el personal de oficina","Convertir el ahorro en menos gastos.",[2,3,0,1,0,0],[0,0,-1,-1,-1]),
+  O("Usar lo aprendido en otro problema","Buscar dónde más puede ayudar.",[2,0,3,1,0,0],[0,1,1,0,1])])
+ ]},
+
+{id:"prod",title:"Producto y apps",short:"Producto",sub:"Convierte lo que la gente necesita en una app que usen.",
+ role:"Diriges el producto de Juntos, una app para que grupos de amigos organicen salidas y dividan gastos.",
+ context:"Tienes cinco programadores, más pedidos de los que pueden hacer y un jefe que quiere crecer.",
+ dims:["Usuario","Prioridades","Equilibrios","Experimentación","Comunicación","Ejecución"],
+ caps:["pers","ejec","sist","expe","pers","ejec"],
+ rounds:[
+ R("d","Pedidos","Veinte pedidos, tres espacios","Los usuarios piden 20 cosas distintas. El equipo solo puede hacer 3 este trimestre.","El plan se cierra el lunes.",[
+  O("Las 3 más votadas","Lo que la mayoría pide.",[2,0,0,0,2,2],[-1,0,-1,1,-1]),
+  O("Entrevistar a 10 usuarios","Encontrar el problema que hay detrás de los pedidos.",[3,2,0,1,0,0],[1,0,1,1,0]),
+  O("Las que hacen que la gente siga usando la app","Decidir por lo que la gente hace, no por lo que dice.",[0,3,2,1,0,0],[1,-1,0,-1,0]),
+  O("Una sola idea grande que nadie pidió","Una apuesta que podría cambiar la app.",[0,1,2,3,0,0],[0,1,1,0,1])]),
+ R("c","Métrica","Marketing celebra","Después de una campaña, las descargas de la app subieron 60%. Pero la gente que la usa cada semana bajó 5%.","Tu jefe pregunta si repiten la campaña.",[
+  O("Celebrar","Más descargas es crecimiento.",[0,0,0,0,2,1],[-1,0,-1,0,0],0),
+  O("Revisar qué pasa entre que la bajan y la usan","Entender dónde se pierden los nuevos.",[2,2,0,2,0,0],[1,0,0,0,0],2),
+  O("Repetir la campaña con más dinero","Funcionó, hay que aprovechar.",[0,0,0,0,1,2],[-1,1,-1,0,0],0),
+  O("Cambiar la pantalla de inicio","Hacerla más atractiva para quien llega.",[1,0,0,1,0,2],[-1,0,0,1,1],1)]),
+ R("d","Lanzamiento","Seis semanas para «dividir gastos»","Es la función más esperada del año.","La competencia lanza algo parecido en dos meses.",[
+  O("Una versión simple que funcione completa","Pocas opciones, pero resuelve el problema.",[0,2,1,0,0,3],[-1,0,-1,0,-1]),
+  O("La versión completa, pero solo para 200 usuarios","Aprender con pocos antes de abrirla a todos.",[2,0,1,2,0,1],[0,-1,0,1,0]),
+  O("Cuatro semanas más para que se vea perfecta","La primera impresión no se repite.",[3,0,1,0,2,0],[1,-1,1,1,0]),
+  O("Primero poner solo un botón y ver cuántos lo tocan","Medir el interés antes de construir.",[0,2,1,3,0,0],[0,0,0,-1,1])]),
+ R("d","Conflicto","Ventas prometió algo","El equipo de ventas le prometió a un cliente importante una función especial. Los programadores dicen que eso retrasa todo lo demás dos meses.","Ambos equipos esperan que tú decidas.",[
+  O("Cumplir la promesa","La confianza de un cliente importante vale el retraso.",[3,0,0,0,2,1],[-1,0,-1,1,0]),
+  O("Sentar a ambos y comparar costo y beneficio","Decidir con números sobre la mesa.",[0,1,3,0,2,0],[1,0,0,0,0]),
+  O("Mantener el plan y hablar con el cliente","El plan existe por una razón.",[0,3,0,0,1,2],[0,-1,1,-1,-1]),
+  O("Una versión reducida en tres semanas","Ni todo ni nada.",[0,0,2,2,0,2],[-1,0,0,0,1])]),
+ R("c","Prueba","¿Cuál botón funciona mejor?","Mostraste un botón nuevo a 40 personas y el botón viejo a otras 40. Con el nuevo compraron 5 personas; con el viejo, 4.","El diseñador quiere cambiarlo hoy.",[
+  O("Cambiarlo: vende 25% más","La mejora es clara.",[0,1,0,0,0,3],[-1,1,0,0,0],0),
+  O("Seguir probando con más personas","Esperar a tener más gente en la prueba.",[0,1,1,3,0,0],[1,-1,0,-1,0],2),
+  O("Ver qué tipo de personas compró con cada botón","Buscar quién responde mejor al nuevo.",[2,0,0,2,0,0],[1,0,0,1,0],1),
+  O("Cambiarlo: si falla, se vuelve atrás","Equivocarse aquí cuesta poco.",[0,0,2,0,0,2],[-1,1,0,0,0],1)])
+ ]},
+
+{id:"ciber",title:"Ciberseguridad",short:"Ciber",sub:"Protege una empresa de ataques y errores.",
+ role:"Eres responsable de seguridad informática en una empresa exportadora de 300 empleados.",
+ context:"La empresa no puede detenerse: hay barcos que salen en fechas fijas. Un error de seguridad puede costar mucho más que dinero.",
+ dims:["Mentalidad de seguridad","Manejo de riesgo","Reacción ante crisis","Razonamiento técnico","Ética","Comunicación"],
+ caps:["juic","juic","ejec","evid","juic","pers"],
+ rounds:[
+ R("c","Correo","Una orden urgente","Finanzas recibe un correo del gerente: «Transfiere hoy $18.000 al nuevo proveedor. Estoy en reunión, no me llames». El correo viene de gerente@exportadora-ec.com. Los correos reales de la empresa terminan en @exportadora.ec.","La contadora te pregunta si puede transferir.",[
+  O("Detener la transferencia y confirmar en persona o por teléfono","Hablar directamente con el gerente.",[3,2,1,0,0,0],[1,-1,0,0,0],2),
+  O("Responder el correo pidiendo confirmación","Que el gerente lo confirme por escrito.",[1,0,0,0,0,2],[0,0,0,1,0],0),
+  O("Transferir","El proveedor existe y el gerente suele pedir las cosas así.",[0,0,1,0,0,1],[-1,1,-1,1,0],0),
+  O("Avisar a todo el equipo de finanzas","Que todos conozcan este tipo de correo.",[2,0,0,0,0,3],[-1,0,1,1,0],1)]),
+ R("d","Accesos","40 cuentas que no deberían existir","Una revisión encontró que 40 personas que ya no trabajan en la empresa todavía pueden entrar a los sistemas. Arreglarlo bien toma tres semanas, y el equipo además debe lanzar un sistema nuevo.","El auditor vuelve en un mes.",[
+  O("Bloquear todas hoy, aunque algo falle","Cerrar el riesgo primero.",[3,1,2,0,0,0],[-1,-1,-1,-1,0]),
+  O("Empezar por las 10 que pueden hacer más daño","Atacar primero lo más peligroso.",[1,3,0,2,0,0],[1,0,0,-1,-1]),
+  O("Crear un proceso automático para que no vuelva a pasar","Arreglar la causa, no solo el problema de hoy.",[2,1,0,3,0,0],[0,0,1,-1,1]),
+  O("Informar a gerencia y que ella decida","Es una decisión de negocio, no solo técnica.",[0,2,0,0,1,3],[0,-1,0,1,0])]),
+ R("d","Crisis","Viernes, 6 de la tarde","Un {{virus}} bloqueó todas las computadoras. Piden $80.000 para desbloquearlas en 48 horas. Tienes {{copias de seguridad}} de hace cinco días. El lunes salen embarques.","Todos te miran a ti.",[
+  O("Desconectar todo y recuperar desde las copias","Perder cinco días de información, pero no pagar.",[1,0,3,2,0,0],[0,-1,0,-1,-1]),
+  O("Llamar a especialistas antes de decidir","Entender el tamaño del problema antes de mover nada.",[0,3,2,0,0,1],[1,0,0,0,0]),
+  O("Asegurar primero los embarques del lunes","Trabajar a mano para despachar a tiempo.",[0,2,2,0,0,2],[-1,0,-1,1,1]),
+  O("Avisar ya a clientes y autoridades","Ser transparente desde el primer momento.",[0,0,0,0,3,3],[0,-1,0,1,0])]),
+ R("c","Contraseñas","Una regla para toda la empresa","Debes elegir cómo serán las contraseñas de los 300 empleados.","Recursos Humanos quiere algo fácil de explicar.",[
+  O("8 caracteres con símbolos, cambiándola cada mes","La regla más común en muchas empresas.",[1,0,0,1,0,0],[0,-1,0,-1,0],0),
+  O("Una frase larga de cuatro palabras más {{verificación en dos pasos}}","Fácil de recordar y difícil de adivinar.",[2,1,0,3,0,0],[1,-1,1,-1,0],2),
+  O("Un programa que crea y guarda contraseñas, con una clave principal","Contraseñas distintas para todo, sin memorizarlas.",[1,1,0,2,0,0],[0,0,0,-1,1],1),
+  O("Solo huella o cara","Nada que recordar.",[1,0,0,1,0,0],[-1,1,0,0,1],1)]),
+ R("d","Ética","Un gerente se lleva datos a casa","Descubres que un gerente envía datos de clientes a su correo personal para trabajar desde casa. No parece tener malas intenciones.","Nadie más lo sabe todavía.",[
+  O("Reportarlo formalmente","Las reglas son iguales para todos.",[2,1,0,0,3,0],[0,-1,0,-1,-1]),
+  O("Hablar con él primero, en privado","Corregir sin exponerlo.",[0,1,0,0,2,3],[0,0,0,1,0]),
+  O("Darle una forma segura de trabajar desde casa","Resolver lo que lo llevó a hacerlo.",[1,2,0,3,0,0],[0,0,1,0,1]),
+  O("Revisar si otros hacen lo mismo antes de actuar","Podría ser un problema de todos, no de una persona.",[2,2,0,2,0,0],[1,0,1,-1,0])])
+ ]},
+
+{id:"salud",title:"Salud y biotecnología",short:"Salud",sub:"Toma decisiones donde está en juego la salud de las personas.",
+ role:"Diriges un centro de salud que atiende a un barrio de 30.000 personas.",
+ context:"Hay más necesidades que recursos. Cada decisión afecta a pacientes reales y a un equipo cansado.",
+ dims:["Evidencia científica","Cuidado de personas","Ética","Prevención","Trabajo en equipo","Decisión bajo presión"],
+ caps:["evid","pers","juic","sist","pers","ejec"],
+ rounds:[
+ R("d","Presupuesto","Dinero para un solo programa","Este año solo alcanza para un programa nuevo.","El comité del barrio espera tu respuesta el lunes.",[
+  O("Una clínica móvil para barrios lejanos","Llegar a quien hoy no puede venir.",[0,3,1,1,1,0],[0,0,0,1,1]),
+  O("Vacunación y chequeos en colegios","Evitar enfermedades antes de que aparezcan.",[1,0,0,3,1,1],[0,-1,1,1,-1]),
+  O("Una máquina nueva para diagnosticar","Detectar enfermedades antes y con más precisión.",[2,1,0,1,0,2],[0,1,1,-1,1]),
+  O("Contratar dos enfermeras más","Aliviar al equipo que ya está saturado.",[0,2,0,0,3,1],[-1,-1,-1,1,-1])]),
+ R("c","Diagnóstico","Un resultado positivo","Una prueba busca una enfermedad rara que tiene 1 de cada 1.000 personas. Si alguien la tiene, la prueba casi siempre lo detecta. Pero de cada 100 personas sanas, 5 salen positivo por error. Un paciente sin síntomas sale positivo.","El paciente está asustado y te pregunta qué significa.",[
+  O("«Casi seguro la tienes»","La prueba casi nunca se equivoca con los enfermos.",[0,1,0,0,0,2],[-1,0,0,0,0],0),
+  O("«Lo más probable es que estés sano; hagamos otra prueba»","Explicarle con calma y confirmar.",[3,1,0,1,0,0],[1,0,0,1,0],2),
+  O("Empezar el tratamiento por si acaso","Mejor prevenir que lamentar.",[0,1,0,1,0,2],[-1,0,0,1,0],0),
+  O("Pedir la opinión de otro médico","Dos cabezas piensan mejor que una.",[1,1,0,0,2,0],[0,-1,0,1,0],1)]),
+ R("d","Ética","Un paciente dice que no","Un señor de 70 años no quiere una operación que los médicos recomiendan. Entiende los riesgos. Su familia te pide que lo convenzas.","La familia está en tu oficina.",[
+  O("Respetar su decisión","Es su cuerpo y su vida.",[0,2,3,0,0,1],[0,-1,0,1,0]),
+  O("Explicarle otra vez, con datos muy claros","Asegurarte de que decide bien informado.",[2,1,1,0,0,1],[1,0,0,0,0]),
+  O("Reunir a paciente, familia y médico","Que todos se escuchen antes de decidir.",[0,2,1,0,3,0],[0,0,0,1,1]),
+  O("Pedir ayuda a un {{comité de ética}}","Un caso difícil merece más miradas.",[1,0,3,0,1,0],[1,-1,0,-1,0])]),
+ R("c","Estudio","¿El café alarga la vida?","Un estudio encontró que las personas que toman café viven, en promedio, más años. Una marca quiere poner en sus anuncios: «El café alarga la vida».","Te piden tu opinión como experto.",[
+  O("Está bien, lo dice un estudio","Es un dato científico.",[0,0,0,1,0,1],[-1,0,0,0,0],0),
+  O("Preguntar si hay otra explicación","Quizás quienes toman café tienen más dinero u otros hábitos.",[3,0,1,1,0,0],[1,0,0,-1,0],2),
+  O("Pedir un estudio que compare grupos parecidos","Unos con café y otros sin café, iguales en todo lo demás.",[3,0,0,1,0,0],[1,-1,1,-1,0],2),
+  O("Cambiar la frase a «el café podría ayudar»","Suavizar el mensaje.",[1,0,1,0,1,0],[0,-1,0,0,0],1)]),
+ R("d","Urgencias","La sala de emergencias explota","Todas las noches la sala de emergencias se llena y la gente espera horas.","El equipo te pide una solución esta semana.",[
+  O("Un sistema de colores para atender primero lo más grave","Ordenar la espera según la gravedad.",[1,0,0,1,1,3],[0,-1,0,-1,-1]),
+  O("Una línea telefónica que oriente antes de venir","Muchos casos se podrían resolver en casa.",[0,2,0,3,0,1],[0,0,1,1,1]),
+  O("Pedir más médicos para la noche","Más manos para la misma demanda.",[0,2,1,0,2,1],[-1,-1,0,1,-1]),
+  O("Analizar a qué hora y por qué llega más gente","Entender el problema antes de actuar.",[3,0,0,2,1,0],[1,0,1,-1,0])])
+ ]},
+
+{id:"ing",title:"Ingeniería y energía",short:"Ingeniería",sub:"Diseña soluciones que funcionen en el mundo físico.",
+ role:"Eres ingeniero en un proyecto de energía solar para una planta que procesa alimentos.",
+ context:"La planta paga mucha electricidad y quiere reducir ese gasto. Aquí los errores no se arreglan con un clic: cuestan dinero y pueden ser peligrosos.",
+ dims:["Diseño técnico","Cálculo","Seguridad","Costo y eficiencia","Innovación","Planificación"],
+ caps:["sist","cuant","juic","cuant","expe","ejec"],
+ rounds:[
+ R("d","Propuesta","¿Por dónde empiezas?","El dueño quiere bajar la factura de luz y te pide una propuesta.","Tiene reunión con el banco en dos semanas.",[
+  O("Paneles solares en el techo","Producir tu propia energía.",[1,1,0,2,2,0],[0,1,1,0,1]),
+  O("Primero cambiar las máquinas viejas que gastan mucho","A veces ahorrar energía es más barato que producirla.",[1,1,0,3,0,1],[1,-1,0,-1,-1]),
+  O("Paneles con {{baterías}} para no depender de la red","Más caro, pero la planta nunca se queda sin luz.",[2,0,1,0,2,1],[0,1,1,-1,1]),
+  O("Medir un mes cuánto gasta cada máquina","Saber exactamente dónde se va la energía.",[1,2,0,1,0,2],[1,-1,1,-1,0])]),
+ R("c","Inversión","Dos tipos de paneles","Paneles A: cuestan $60.000, ahorran $10.000 al año y duran 25 años. Paneles B: cuestan $40.000, ahorran $8.000 al año y duran 8 años.","El dueño quiere saber cuál comprar.",[
+  O("A","Cuesta más, pero es la mejor inversión.",[1,3,0,2,0,0],[1,0,1,-1,0],2),
+  O("B, porque se paga más rápido","Recuperas el dinero en 5 años, no en 6.",[0,1,0,2,0,1],[-1,0,-1,-1,0],0),
+  O("B, porque es más barato","El dinero que sobra sirve para otras cosas.",[0,1,0,3,0,0],[0,-1,-1,-1,0],1),
+  O("Da igual","Los dos se pagan en 5 o 6 años.",[0,1,0,1,0,1],[-1,0,0,0,0],0)]),
+ R("d","Seguridad","Plazo contra seguridad","La instalación debe estar lista en tres semanas para la temporada alta. El electricista dice que los cables del techo están viejos y revisarlos tomaría dos semanas más.","El dueño llama cada día para preguntar.",[
+  O("Revisar los cables aunque haya retraso","No instalar sobre algo que puede fallar.",[1,0,3,0,0,2],[1,-1,1,0,0]),
+  O("Instalar solo en la parte del techo que está bien","Avanzar sin arriesgar.",[2,0,1,1,1,1],[0,0,0,-1,1]),
+  O("Cumplir el plazo y revisar después","La temporada alta no espera.",[0,0,0,2,1,3],[-1,1,-1,0,-1]),
+  O("Explicarle los riesgos al dueño y que decida","Es su planta y su dinero.",[0,1,2,1,0,2],[0,-1,0,1,0])]),
+ R("d","Innovación","Una tecnología nueva","Un proveedor ofrece paneles de un tipo nuevo que prometen 30% más energía. Nadie en el país los ha usado todavía.","Te da una semana para responder.",[
+  O("Probarlos en una parte pequeña","Aprender sin arriesgar todo.",[1,0,1,0,3,1],[0,0,0,0,1]),
+  O("Quedarte con lo que ya está probado","Lo seguro primero.",[2,0,2,1,0,1],[0,-1,0,0,-1]),
+  O("Pedir datos de plantas donde ya funcionen","Ver resultados reales antes de decidir.",[1,2,1,0,1,1],[1,-1,0,-1,0]),
+  O("Apostar por ellos en todo el proyecto","Si funcionan, serás el primero.",[1,0,0,1,3,1],[-1,1,1,0,1])]),
+ R("c","Medición","Producen menos de lo esperado","Tu equipo mide que los paneles están produciendo menos energía de lo que decía el plan. Revisas y ves que el plan se hizo con datos de agosto, el mes más soleado del año. Hoy es febrero.","El dueño quiere reclamar al proveedor.",[
+  O("Reclamar al proveedor","Los paneles no cumplen lo prometido.",[0,0,0,1,0,2],[-1,0,-1,0,0],0),
+  O("Comparar con lo esperado para febrero, no para agosto","Medir contra el mes correcto.",[2,3,0,0,0,0],[1,0,0,-1,0],2),
+  O("Revisar si los paneles tienen sombra o suciedad","Buscar fallas físicas.",[3,0,1,0,0,1],[1,-1,0,-1,0],1),
+  O("Poner más paneles para compensar","Asegurar la energía que se necesita.",[1,0,0,1,1,1],[-1,1,0,0,0],0)])
+ ]},
+
+{id:"agro",title:"Agro y alimentos",short:"Agro",sub:"Produce alimentos para el mundo con tecnología y cuidado del ambiente.",
+ role:"Manejas una finca que produce y exporta cacao y banano.",
+ context:"Los compradores de otros países exigen calidad, el clima está cambiando y la competencia se moderniza.",
+ dims:["Producción","Tecnología aplicada","Calidad y seguridad","Sostenibilidad","Mercados","Manejo de riesgo"],
+ caps:["ejec","expe","juic","sist","cuant","juic"],
+ rounds:[
+ R("d","Inversión","$40.000 para mejorar la finca","Este año puedes invertir $40.000.","Los dueños quieren tu plan esta semana.",[
+  O("Riego por goteo con sensores de humedad","Usar solo el agua que cada planta necesita.",[1,3,0,2,0,0],[0,0,1,-1,1]),
+  O("Obtener la {{certificación orgánica}}","Vender más caro en Europa.",[0,0,1,2,3,0],[0,0,1,0,0]),
+  O("Capacitar a los trabajadores","Mejores prácticas en cada tarea.",[3,0,2,1,0,0],[0,-1,0,1,-1]),
+  O("Drones que detectan {{plaga}}s desde el aire","Ver problemas antes de que se extiendan.",[0,3,1,0,0,2],[-1,1,0,-1,1])]),
+ R("c","Rendimiento","¿Cuál lote es mejor?","El lote A produjo 200 cajas en 2 {{hectárea}}s. El lote B produjo 300 cajas en 5 hectáreas. El técnico dice que el lote B es mejor porque produjo más.","Quiere copiar en toda la finca lo que se hizo en B.",[
+  O("Tiene razón","B produjo 100 cajas más.",[2,0,0,0,1,0],[-1,0,0,0,0],0),
+  O("En realidad A es más productivo","Hay que entender qué se hace distinto en A.",[3,1,0,0,0,1],[1,0,0,-1,0],2),
+  O("Primero ver el clima y el suelo de cada lote","No se pueden comparar sin eso.",[1,0,0,1,0,2],[1,-1,0,-1,0],1),
+  O("Comprar más tierra para hacer más lotes como B","Más tierra, más cajas.",[1,0,0,0,2,1],[-1,1,1,0,0],0)]),
+ R("d","Plaga","Aparece una plaga","Una {{plaga}} ataca una parte de la finca. Un químico fuerte la elimina en días, pero el comprador europeo tiene límites muy estrictos de {{residuos}}.","La cosecha es en seis semanas.",[
+  O("Usar el químico solo en la zona afectada y medir residuos","Controlar rápido y verificar.",[2,0,1,0,1,2],[-1,0,-1,0,0]),
+  O("Usar {{control biológico}}","Más lento, pero sin químicos.",[0,2,0,3,0,1],[0,1,1,0,1]),
+  O("Cortar y destruir las plantas afectadas","Perder poco para no perder todo.",[2,0,2,0,0,2],[0,-1,0,-1,-1]),
+  O("Avisar al comprador y decidir juntos","Mejor que se entere por ti.",[0,0,1,0,3,2],[0,-1,0,1,0])]),
+ R("c","Rumor","El vecino se hizo rico","Tres vecinos cambiaron toda su finca a pitahaya y ganaron mucho dinero. Te recomiendan hacer lo mismo.","Te dicen que si esperas, el precio bajará.",[
+  O("Cambiar toda la finca a pitahaya","Si a ellos les funcionó, a ti también.",[1,0,0,0,3,0],[-1,1,0,0,1],0),
+  O("Averiguar cuántos lo intentaron y cómo les fue a todos","Tal vez solo conoces a los que ganaron.",[0,1,0,0,2,3],[1,-1,0,-1,0],2),
+  O("Probar con una parte pequeña","Aprender sin arriesgar la finca.",[1,2,0,0,1,1],[0,-1,0,0,1],1),
+  O("No cambiar nunca","El cacao y el banano siempre han funcionado.",[2,0,0,0,0,1],[0,-1,0,0,-1],0)]),
+ R("d","Clima","Menos lluvia en el futuro","Los estudios dicen que en 15 años la zona tendrá bastante menos lluvia.","Los dueños preguntan si hay que hacer algo ya.",[
+  O("Construir reservorios de agua desde ahora","Prepararse antes de que falte.",[1,1,0,2,0,2],[0,-1,1,0,0]),
+  O("Probar variedades que resisten la sequía","Adaptar los cultivos al clima que viene.",[0,3,0,2,0,1],[0,1,1,0,1]),
+  O("Esperar a que las predicciones sean más seguras","Decidir en unos años.",[1,0,0,0,2,2],[1,-1,-1,-1,-1]),
+  O("Unirse con fincas vecinas para un plan común","El agua es un problema de toda la zona.",[2,0,0,2,1,1],[0,0,1,1,0])])
+ ]},
+
+{id:"diseno",title:"Diseño y creación digital",short:"Diseño",sub:"Crea imagen, experiencias y contenido que conecten con las personas.",
+ role:"Diriges el diseño de una marca de ropa que vende por internet.",
+ context:"Las herramientas de IA producen imágenes en segundos. Lo que tu equipo aporta es criterio: entender a la gente y saber qué funciona.",
+ dims:["Empatía con el usuario","Creatividad","Estética","Prueba y error","Comunicación visual","Criterio"],
+ caps:["pers","expe","expe","evid","pers","juic"],
+ rounds:[
+ R("d","Marca","Una imagen nueva","La marca necesita un logo y una imagen nuevos.","Tienes dos semanas.",[
+  O("Entrevistar a clientas para ver qué sienten por la marca","Diseñar desde lo que ellas perciben.",[3,0,0,1,1,1],[1,0,0,1,0]),
+  O("Proponer algo audaz, distinto a toda la competencia","Que nadie la confunda.",[0,3,2,0,1,0],[-1,1,1,0,1]),
+  O("Hacer 3 versiones y probarlas en redes","Que el público elija.",[0,1,1,3,1,0],[-1,0,0,0,1]),
+  O("Mantener la esencia y modernizarla","No perder lo que la gente ya reconoce.",[0,0,2,0,2,2],[0,-1,0,0,-1])]),
+ R("c","Encuesta","A todos les encanta","Hiciste una encuesta en el Instagram de la marca: 90% prefiere el diseño nuevo. Solo la vieron tus seguidores más fieles.","Tu jefa quiere lanzarlo mañana.",[
+  O("Lanzarlo","9 de cada 10 lo prefieren.",[0,1,1,0,1,0],[-1,1,0,0,0],0),
+  O("Preguntar también a gente que no te sigue","Tus seguidores fieles no son todos tus clientes.",[2,0,0,3,0,1],[1,-1,0,1,0],2),
+  O("Hacer la encuesta más grande en el mismo Instagram","Más respuestas, más seguridad.",[1,0,0,1,1,0],[0,0,0,0,0],0),
+  O("Mostrarlo solo en una parte de la web y medir ventas","Ver qué hace la gente, no qué dice.",[0,0,0,3,0,2],[1,0,0,-1,0],2)]),
+ R("d","Web","Bonito pero confuso","El nuevo diseño de la web es precioso, pero en pruebas la gente tarda el doble en encontrar el botón de comprar.","El diseñador defiende su trabajo.",[
+  O("Priorizar que sea fácil, aunque se vea más simple","Si no compran, no importa lo bonito.",[3,0,0,1,0,2],[0,-1,-1,1,-1]),
+  O("Mantener el diseño y hacer el botón más visible","Un ajuste pequeño.",[0,1,2,1,1,1],[0,0,0,0,0]),
+  O("Rediseñar desde cero buscando las dos cosas","Bonito y fácil a la vez.",[1,3,1,0,1,0],[0,1,1,0,1]),
+  O("Probar ambas versiones con clientes reales","Que los datos decidan.",[1,0,0,3,0,2],[1,0,0,0,0])]),
+ R("d","Encargo","«Hazlo igualito»","Un cliente importante te pide un diseño «igualito» al de una marca famosa.","Paga bien y quiere respuesta hoy.",[
+  O("Proponer algo propio inspirado en lo que le gusta","Explicarle por qué copiar es un riesgo.",[1,2,0,0,2,1],[0,0,1,1,1]),
+  O("Hacer algo muy parecido, cambiando detalles","El cliente paga y queda contento.",[0,1,2,0,2,1],[-1,1,-1,0,-1]),
+  O("Rechazar el trabajo","No quieres ese tipo de encargos.",[0,0,1,0,1,3],[0,-1,0,-1,0]),
+  O("Preguntarle qué le gusta de esa marca y diseñar desde ahí","Entender el fondo del pedido.",[3,2,0,0,1,0],[1,0,0,1,1])]),
+ R("c","Anuncios","¿Cuál anuncio repetir?","El anuncio A tuvo 1.000 «me gusta» y generó 10 ventas. El anuncio B tuvo 200 «me gusta» y generó 30 ventas. El objetivo de la campaña era vender.","Solo hay presupuesto para repetir uno.",[
+  O("A","Mucha más gente lo vio y le gustó.",[0,1,2,0,2,0],[-1,0,0,1,0],0),
+  O("B","Cumplió mejor el objetivo.",[1,0,0,2,0,3],[1,0,0,-1,0],2),
+  O("Uno nuevo que mezcle lo mejor de los dos","Combinar alcance y ventas.",[0,3,1,0,1,0],[0,1,0,0,1],1),
+  O("Repetir los dos con la mitad del dinero cada uno","Seguir aprendiendo.",[0,0,0,3,0,1],[1,-1,0,0,0],1)])
+ ]}
+];
+
+var FAMILIES=[
+ {n:"Finanzas e inversiones",s:{fin:1,neg:.4,data:.2},a:{ana:1,peo:-1},acad:"Finanzas, Economía, Ingeniería Comercial, Matemática Aplicada, Actuaría, Business Analytics"},
+ {n:"Economía y políticas públicas",s:{fin:.8,data:.4,salud:.1,agro:.1},a:{ana:1,pla:1},acad:"Economía, Economía Aplicada, Estadística, Ciencias Políticas con énfasis económico"},
+ {n:"Administración y dirección de empresas",s:{neg:1,prod:.4,agro:.2},a:{peo:1},acad:"Administración de Empresas, Ingeniería Comercial, Ingeniería Industrial, Negocios Internacionales"},
+ {n:"Emprendimiento",s:{neg:1,prod:.6,diseno:.3},a:{rie:1,cre:1},acad:"Administración, Emprendimiento e Innovación, Negocios Digitales, o una carrera técnica con foco en crear empresas"},
+ {n:"Datos y analítica",s:{data:1,fin:.3,ia:.3},a:{ana:1,peo:-1},acad:"Estadística, Ciencia de Datos, Matemática, Ingeniería en Computación, Business Analytics"},
+ {n:"Inteligencia artificial y computación",s:{ia:1,data:.5,ciber:.3},a:{cre:1,peo:-1},acad:"Ciencias de la Computación, Ingeniería de Software, Ciencia de Datos, Ingeniería en Inteligencia Artificial"},
+ {n:"Producto y experiencia digital",s:{prod:1,diseno:.5,ia:.3},a:{peo:1,cre:1},acad:"Ingeniería de Software, Diseño de Interacción y UX, Ingeniería Industrial, Administración con énfasis en innovación"},
+ {n:"Ciberseguridad",s:{ciber:1,ia:.4},a:{rie:-1,ana:1},acad:"Ingeniería en Ciberseguridad, Ciencias de la Computación, Ingeniería en Sistemas, Telecomunicaciones"},
+ {n:"Salud y ciencias de la vida",s:{salud:1,data:.2},a:{peo:1,ana:1},acad:"Medicina, Enfermería, Biotecnología, Bioquímica, Nutrición, Ingeniería Biomédica, Salud Pública"},
+ {n:"Ingeniería y energía",s:{ing:1,agro:.3,ia:.2},a:{ana:1},acad:"Ingeniería Eléctrica, Mecánica, Civil, Industrial, Ambiental, Energías Renovables, Mecatrónica"},
+ {n:"Agroindustria y alimentos",s:{agro:1,ing:.3,salud:.2},a:{pla:1},acad:"Agronomía, Ingeniería en Alimentos, Acuicultura, Biotecnología, Agronegocios, Ingeniería Ambiental"},
+ {n:"Diseño y creación digital",s:{diseno:1,prod:.5},a:{cre:1,peo:1},acad:"Diseño Gráfico, Diseño de Interacción y UX, Multimedia, Comunicación Visual, Arquitectura"},
+ {n:"Marketing y crecimiento",s:{diseno:.5,prod:.5,neg:.5,data:.3},a:{peo:1,cre:1},acad:"Marketing, Comunicación, Publicidad, Administración con énfasis comercial"},
+ {n:"Operaciones y procesos",s:{ing:.5,agro:.4,ia:.3,neg:.2},a:{cre:-1,ana:1},acad:"Ingeniería Industrial, Logística y Cadena de Suministro, Ingeniería en Sistemas"}
+];
+
+/* máximos alcanzables por dimensión */
+SIMS.forEach(function(s){
+  s.max=[0,0,0,0,0,0];
+  s.rounds.forEach(function(r){for(var i=0;i<6;i++){s.max[i]+=Math.max.apply(null,r.opts.map(function(o){return o.w[i]}))}});
+});
+function simById(id){for(var i=0;i<SIMS.length;i++)if(SIMS[i].id===id)return SIMS[i]}
+
+/* ============ ALMACENAMIENTO ============ */
+var NS="careerlab.v3.";
+function sget(k){try{var v=localStorage.getItem(NS+k);return v?JSON.parse(v):null}catch(e){return null}}
+function sset(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){}}
+function slug(n){return n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")}
+function people(){return sget("people")||[]}
+function addPerson(n){var p=people().filter(function(x){return slug(x)!==slug(n)});p.unshift(n);sset("people",p.slice(0,8))}
+
+var S={name:"",data:{attempts:{}},run:null};
+function loadP(){S.data=sget("p."+slug(S.name))||{attempts:{}}}
+function saveP(){sset("p."+slug(S.name),S.data)}
+function saveRun(){if(S.run)sset("run."+slug(S.name),{i:S.run.i,round:S.run.round,picks:S.run.picks,orders:S.run.orders,t0:S.run.t0})}
+function clearRun(){try{localStorage.removeItem(NS+"run."+slug(S.name))}catch(e){}}
+function pendingRun(){return sget("run."+slug(S.name))}
+function askPersist(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}}
+function b64e(str){return btoa(unescape(encodeURIComponent(str)))}
+function b64d(str){return decodeURIComponent(escape(atob(str)))}
+function picksOf(s,at){
+  if(at.p)return at.p;
+  return at.choices.map(function(c,k){var r=s.rounds[k];for(var i=0;i<4;i++)if(plain(r.opts[i].t)===c.t)return {o:i,ms:c.ms};return {o:0,ms:c.ms}});
+}
+function exportCode(){
+  var a={};
+  SIMS.forEach(function(s){var list=S.data.attempts[s.id];if(!list)return;
+    a[s.id]=list.map(function(at){var p=picksOf(s,at);return [at.date,p.map(function(x){return x.o}).join(""),p.map(function(x){return Math.round(x.ms/1000)}),at.enjoy,at.diff,at.note||"",at.secs]})});
+  return "CL3-"+b64e(JSON.stringify({v:3,n:S.name,a:a}));
+}
+function importCode(code){
+  code=String(code||"").replace(/\s+/g,"");
+  if(code.indexOf("CL3-")!==0)throw new Error("fmt");
+  var o=JSON.parse(b64d(code.slice(4)));if(!o||o.v!==3||!o.n||!o.a)throw new Error("fmt");
+  var data={attempts:{}};
+  SIMS.forEach(function(s,i){var list=o.a[s.id];if(!list)return;
+    data.attempts[s.id]=list.map(function(x){
+      var run={i:i,picks:x[1].split("").map(function(c,k){return {o:+c,ms:(x[2][k]||0)*1000}}),enjoy:x[3],diff:x[4]};
+      return scoreRun(run,x[5],x[0],x[6]);
+    });
+  });
+  return {name:String(o.n).replace(/[<>]/g,"").slice(0,40),data:data};
+}
+function first(id){var a=S.data.attempts[id];return a&&a.length?a[0]:null}
+function doneCount(){return SIMS.filter(function(s){return first(s.id)}).length}
+
+/* ============ UTILIDADES ============ */
+var app=document.getElementById("app");
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function gl(t){return String(t).replace(/\{\{([^}]+)\}\}/g,'<span class="gt">$1</span>')}
+function plain(t){return String(t).replace(/\{\{([^}]+)\}\}/g,"$1")}
+function glossBox(texts){var seen=[];texts.join(" ").replace(/\{\{([^}]+)\}\}/g,function(_,k){if(GLOSS[k]&&seen.indexOf(k)<0)seen.push(k)});
+  return seen.length?'<details class="gloss"><summary>¿Alguna palabra nueva? Toca aquí</summary>'+seen.map(function(k){return '<p><b>'+k[0].toUpperCase()+k.slice(1)+':</b> '+GLOSS[k]+'</p>'}).join("")+'</details>':''}
+function pad(n){return String(n).padStart(2,"0")}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function mount(html){app.innerHTML='<div class="enter">'+html+'</div>';window.scrollTo(0,0);document.body.scrollTop=0;document.documentElement.scrollTop=0;renderWho()}
+function on(id,fn){var el=document.getElementById(id);if(el)el.onclick=fn}
+function fdate(iso){return new Date(iso).toLocaleDateString("es-EC",{day:"numeric",month:"long",year:"numeric"})}
+function level(v){return v>=.75?"muy marcada":v>=.55?"marcada":v>=.35?"presente":"menor"}
+function renderWho(){
+  var w=document.getElementById("who");
+  w.innerHTML=S.name?'<span>'+esc(S.name)+'</span><button class="link" id="swap" type="button">Cambiar</button>':'<button class="link" id="guideTop" type="button">Guía para padres</button>';
+  on("swap",function(){S.run=null;S.name="";viewWelcome()});
+  on("guideTop",viewGuide);
+}
+document.getElementById("brand").onclick=function(){
+  S.run=null;S.name?viewHome():viewWelcome();
+};
+
+/* ============ VISTAS ============ */
+function viewWelcome(){
+  var ppl=people();
+  mount(
+  '<section class="panel hero">'+
+   '<h1>¿Cómo decides cuando no hay una respuesta obvia?</h1>'+
+   '<p class="lede">Diez situaciones de trabajo simuladas: negocios, finanzas, datos, inteligencia artificial, apps, ciberseguridad, salud, ingeniería, agro y diseño. En la mayoría de decisiones no hay una respuesta correcta; lo que importa es el patrón que aparece cuando las comparas.</p>'+
+   '<label class="f" for="nm">Tu nombre</label>'+
+   '<input type="text" id="nm" maxlength="40" autocomplete="given-name" placeholder="Escribe tu nombre">'+
+   '<div class="err" id="err"></div>'+
+   '<button class="btn full" id="go" type="button">Entrar</button>'+
+   (ppl.length?'<p class="small muted" style="margin-top:18px">Ya han participado en este dispositivo:</p><div class="chips">'+ppl.map(function(p,i){return '<button class="chip" type="button" data-p="'+i+'">'+esc(p)+'</button>'}).join("")+'</div>':'')+
+  '</section>'+
+  '<section class="panel"><h3>Antes de empezar</h3><p>Son diez simulaciones de 8 a 10 minutos cada una; no hace falta hacerlas todas el mismo día. Responde lo que realmente harías, no lo que crees que suena mejor: no se muestran puntajes mientras juegas y el resultado no es una nota. Tu avance se guarda automáticamente en este navegador, incluso si cierras a mitad de una simulación.</p><button class="link" id="guide" type="button">Guía para padres y orientadores</button></section>'+
+  '<section class="panel"><details class="gloss" style="background:transparent;border:0;padding:0;margin:0"><summary>¿Cambiaste de celular o se borró tu avance? Recupéralo con tu código</summary>'+
+  '<p class="small muted">Pega aquí el código de respaldo que guardaste.</p><textarea id="rcode" placeholder="CL3-..."></textarea><div class="err" id="rerr"></div>'+
+  '<button class="btn full" id="restore" type="button">Recuperar mi avance</button></details></section>');
+  var input=document.getElementById("nm");
+  function enter(n){n=String(n||"").replace(/[<>]/g,"").trim().slice(0,40);if(!n){document.getElementById("err").textContent="Escribe tu nombre para continuar.";input.focus();return}S.name=n;addPerson(n);loadP();askPersist();viewHome()}
+  on("go",function(){enter(input.value)});
+  input.onkeydown=function(e){if(e.key==="Enter")enter(input.value)};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-p]"),function(b){b.onclick=function(){enter(ppl[+b.getAttribute("data-p")])}});
+  on("guide",viewGuide);
+  on("restore",function(){
+    try{var r=importCode(document.getElementById("rcode").value);
+      S.name=r.name;addPerson(r.name);loadP();
+      SIMS.forEach(function(s){var loc=S.data.attempts[s.id],inc=r.data.attempts[s.id];if(inc&&(!loc||!loc.length))S.data.attempts[s.id]=inc});
+      saveP();askPersist();viewHome();
+    }catch(e){document.getElementById("rerr").textContent="El código no es válido. Revisa que lo hayas copiado completo, desde CL3- hasta el final."}
+  });
+}
+
+function viewHome(){
+  var d=doneCount();
+  var html='<section class="panel"><h2>Hola, '+esc(S.name)+'</h2>'+
+   '<p class="muted">'+(d===0?"Elige cualquier simulación para empezar; el orden no importa.":d<10?"Llevas "+d+" de 10. Tu perfil se vuelve más útil con cada campo distinto que completas.":"Completaste las diez simulaciones. Tu reporte integrado está listo.")+'</p>'+
+   '<div class="progressline" aria-label="'+d+' de 10 completadas">'+SIMS.map(function(s){return '<i class="'+(first(s.id)?"on":"")+'"></i>'}).join("")+'</div>'+
+   (d===10?'<button class="btn full" id="master" type="button" style="margin-top:14px">Ver Career DNA Maestro</button>':'')+
+  '</section>';
+  var pr=pendingRun();
+  if(pr&&SIMS[pr.i])html+='<section class="panel brief"><h3>Tienes una simulación a medias</h3><p>'+SIMS[pr.i].title+(pr.round<5?', decisión '+(pr.round+1)+' de 5.':', solo faltan las preguntas finales.')+' Tus respuestas anteriores están guardadas.</p><div class="row"><button class="btn" id="resume" type="button">Continuar donde quedé</button><button class="btn ghost" id="discard" type="button">Empezar de nuevo</button></div></section>';
+  html+='<div class="sims">';
+  SIMS.forEach(function(s,i){
+    var f=first(s.id);
+    html+='<article class="sim'+(f?" done":"")+'"><div class="n">'+pad(i+1)+'</div><h3>'+s.title+'</h3><p class="small muted" style="margin:0">'+s.sub+'</p>'+
+     '<div class="status">'+(f?"Completada el "+fdate(f.date):"Pendiente")+'</div>'+
+     '<div class="row">'+(f?'<button class="btn ghost" data-v="'+i+'" type="button">Ver resultado</button><button class="btn ghost" data-r="'+i+'" type="button">Repetir</button>':'<button class="btn" data-s="'+i+'" type="button">Comenzar</button>')+'</div></article>';
+  });
+  html+='</div>';
+  if(d>0&&d<10)html+='<p class="small muted" style="margin-top:14px">El Career DNA Maestro se habilita al completar las diez. Puedes hacerlas en varios días; una o dos por sesión es lo ideal. Si repites una simulación, el reporte maestro conserva tu primer intento, que suele ser el más espontáneo.</p>';
+  if(d>0)html+='<section class="panel" style="margin-top:14px"><h3>Respaldo de tu avance</h3><p class="small">Tu avance se guarda en este celular y en este navegador. Si cambias de equipo, usas modo incógnito o se borra el historial, se pierde. Guarda este código en tus notas o envíaselo a tus padres; con él puedes recuperar todo en cualquier equipo.</p>'+
+   '<button class="btn ghost full" id="mkcode" type="button">Mostrar mi código de respaldo</button><div id="codebox" class="hide"><textarea class="reporttext" id="ccode" readonly style="min-height:90px;margin-top:10px"></textarea><button class="btn full" id="cpcode" type="button" style="margin-top:8px">Copiar código</button><p class="small muted" id="cnote"></p></div></section>';
+  mount(html);
+  on("master",viewMaster);
+  on("resume",function(){var r=pendingRun();S.run={i:r.i,round:r.round,picks:r.picks,orders:r.orders,t:Date.now(),t0:r.t0,sel:null};if(r.round<5)viewRound();else viewReflect()});
+  on("discard",function(){clearRun();viewHome()});
+  on("mkcode",function(){document.getElementById("ccode").value=exportCode();document.getElementById("codebox").classList.remove("hide")});
+  on("cpcode",function(){var ta=document.getElementById("ccode"),n=document.getElementById("cnote");
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(function(){n.textContent="Código copiado. Pégalo en tus notas o en un mensaje."},function(){ta.select();n.textContent="Selecciona el código y cópialo manualmente."})}
+    else{ta.select();try{document.execCommand("copy");n.textContent="Código copiado."}catch(e){n.textContent="Selecciona el código y cópialo manualmente."}}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-s],[data-r]"),function(b){b.onclick=function(){viewBrief(+(b.getAttribute("data-s")||b.getAttribute("data-r")))}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-v]"),function(b){b.onclick=function(){var s=SIMS[+b.getAttribute("data-v")];viewResult(s,first(s.id),true)}});
+}
+
+function viewBrief(i){
+  var s=SIMS[i],rep=!!first(s.id);
+  mount('<section class="panel situ brief"><div class="tag">'+pad(i+1)+'. '+s.title+'</div><h2>'+s.role+'</h2><p class="body">'+s.context+'</p>'+
+   '<p class="small muted" style="margin-top:18px">Cinco decisiones, entre 8 y 10 minutos. Puedes cambiar tu elección antes de confirmarla, pero no volver atrás después.'+(rep?' Este intento será de práctica: tu primer resultado se conserva para el reporte maestro.':'')+'</p>'+
+   '<div class="row" style="margin-top:16px"><button class="btn ghost noprint" id="cancel" type="button">Volver</button><button class="btn" id="start" type="button">Empezar</button></div></section>');
+  on("cancel",viewHome);
+  on("start",function(){
+    S.run={i:i,round:0,picks:[],orders:s.rounds.map(function(r){return shuffle([0,1,2,3])}),t:Date.now(),t0:Date.now(),sel:null};
+    saveRun();viewRound();
+  });
+}
+
+function viewRound(){
+  var run=S.run,s=SIMS[run.i],r=s.rounds[run.round],L="ABCD";
+  run.sel=null;run.t=Date.now();
+  var html='<section class="panel"><div class="simhead"><h3>'+s.title+'</h3><span class="small muted">Decisión '+(run.round+1)+' de 5</span></div>'+
+   '<div class="steps">'+s.rounds.map(function(_,k){return '<i class="'+(k<=run.round?"on":"")+'"></i>'}).join("")+'</div></section>'+
+   '<section class="panel situ"><div class="tag">'+r.tag+'</div><h2>'+r.title+'</h2><p class="body">'+gl(r.body)+'</p>'+
+   (r.pressure?'<div class="pressure">'+gl(r.pressure)+'</div>':'')+
+   glossBox([r.body,r.pressure].concat(r.opts.map(function(o){return o.t+" "+o.d})))+
+   '<div class="opts" role="group" aria-label="Opciones">'+run.orders[run.round].map(function(oi,k){var o=r.opts[oi];return '<button class="opt" type="button" aria-pressed="false" data-o="'+oi+'"><span class="k">'+L[k]+'</span><span><b>'+gl(o.t)+'</b><span class="d">'+gl(o.d)+'</span></span></button>'}).join("")+'</div>'+
+   '<button class="btn full" id="confirm" type="button" disabled>Confirmar decisión</button>'+
+   '<p class="note">Varias opciones pueden ser razonables. Elige la que realmente tomarías.</p></section>';
+  mount(html);
+  var btns=document.querySelectorAll(".opt");
+  Array.prototype.forEach.call(btns,function(b){b.onclick=function(){
+    Array.prototype.forEach.call(btns,function(x){x.setAttribute("aria-pressed","false")});
+    b.setAttribute("aria-pressed","true");run.sel=+b.getAttribute("data-o");document.getElementById("confirm").disabled=false;
+  }});
+  on("confirm",function(){
+    if(run.sel===null)return;
+    run.picks.push({o:run.sel,ms:Date.now()-run.t});
+    run.round++;saveRun();
+    if(run.round<s.rounds.length)viewRound();else viewReflect();
+  });
+}
+
+function viewReflect(){
+  var run=S.run,s=SIMS[run.i];run.enjoy=0;run.diff=0;
+  function scale(id,lo,hi){return '<div class="scale" id="'+id+'">'+[1,2,3,4,5].map(function(n){return '<button type="button" aria-pressed="false" data-n="'+n+'">'+n+'</button>'}).join("")+'</div><div class="scalelbl"><span>'+lo+'</span><span>'+hi+'</span></div>'}
+  mount('<section class="panel situ"><div class="tag">'+s.title+'</div><h2>Antes de ver tu resultado</h2>'+
+   '<p class="muted">Estas respuestas pesan tanto como tus decisiones: separan lo que te sale bien de lo que te gusta hacer.</p>'+
+   '<label class="f">¿Cuánto disfrutaste este tipo de problema?</label>'+scale("sEnjoy","Nada","Muchísimo")+
+   '<label class="f">¿Qué tan difícil te resultó?</label>'+scale("sDiff","Muy fácil","Muy difícil")+
+   '<label class="f" for="note">¿Qué decisión te costó más y por qué? <span class="muted small">(opcional)</span></label>'+
+   '<textarea id="note" maxlength="600" placeholder="Una o dos frases bastan."></textarea>'+
+   '<div class="err" id="err"></div><button class="btn full" id="fin" type="button" style="margin-top:8px">Ver mi resultado</button></section>');
+  [["sEnjoy","enjoy"],["sDiff","diff"]].forEach(function(p){
+    var bs=document.querySelectorAll("#"+p[0]+" button");
+    Array.prototype.forEach.call(bs,function(b){b.onclick=function(){Array.prototype.forEach.call(bs,function(x){x.setAttribute("aria-pressed","false")});b.setAttribute("aria-pressed","true");run[p[1]]=+b.getAttribute("data-n")}});
+  });
+  on("fin",function(){
+    if(!run.enjoy||!run.diff){document.getElementById("err").textContent="Marca cuánto lo disfrutaste y qué tan difícil te resultó.";return}
+    var at=scoreRun(run,document.getElementById("note").value.trim().slice(0,600));
+    (S.data.attempts[s.id]=S.data.attempts[s.id]||[]).push(at);saveP();clearRun();
+    var isFirst=S.data.attempts[s.id].length===1;S.run=null;
+    viewResult(s,at,isFirst);
+  });
+}
+
+function scoreRun(run,note,date,secs){
+  var s=SIMS[run.i],sc=[0,0,0,0,0,0],ax=[0,0,0,0,0],crit=[],choices=[];
+  run.picks.forEach(function(p,k){
+    var r=s.rounds[k],o=r.opts[p.o];
+    for(var i=0;i<6;i++)sc[i]+=o.w[i];
+    for(var j=0;j<5;j++)ax[j]+=o.x[j];
+    if(r.kind==="c")crit.push(o.q);
+    choices.push({tag:r.tag,t:plain(o.t),ms:p.ms,c:r.kind==="c"?o.q:null});
+  });
+  return {date:date||new Date().toISOString(),p:run.picks.map(function(x){return {o:x.o,ms:x.ms}}),scores:sc,norm:sc.map(function(v,i){return v/s.max[i]}),axes:ax.map(function(v){return v/s.rounds.length}),
+    crit:crit,enjoy:run.enjoy,diff:run.diff,note:note,choices:choices,secs:secs!=null?secs:Math.round((Date.now()-run.t0)/1000)};
+}
+
+/* ============ INTERPRETACIÓN ============ */
+function topDims(s,at){return at.norm.map(function(v,i){return [v,i]}).sort(function(a,b){return b[0]-a[0]})}
+function critText(c){
+  var full=c.filter(function(q){return q===2}).length,part=c.filter(function(q){return q===1}).length,intu=c.filter(function(q){return q===0}).length,bits=[];
+  if(full===2)return "identificó el razonamiento de fondo en ambas";
+  if(full===1)bits.push("identificó el razonamiento de fondo en una");
+  if(part)bits.push(part===2?"abordó ambas de forma parcial":(full?"abordó la otra de forma parcial":"abordó una de forma parcial"));
+  if(intu)bits.push(intu===2?"en ambas se inclinó por la respuesta más intuitiva":(full||part?"en la otra se inclinó por la respuesta más intuitiva":"en una se inclinó por la respuesta más intuitiva"));
+  return bits.join(" y ");
+}
+function axisText(axes,scope){
+  var best=-1,bi=0;axes.forEach(function(v,i){if(Math.abs(v)>best){best=Math.abs(v);bi=i}});
+  if(best<.4)return scope+" combinó estilos sin una inclinación marcada.";
+  return scope+" tendió a "+(axes[bi]>0?AX[bi].pos:AX[bi].neg)+".";
+}
+function simInterp(s,at,name){
+  var t=topDims(s,at);
+  return "En "+s.title+", "+name+" se inclinó por decisiones asociadas con "+s.dims[t[0][1]].toLowerCase()+" y "+s.dims[t[1][1]].toLowerCase()+". "+
+   axisText(at.axes,"En su estilo de decisión")+" En las dos situaciones que contenían una trampa de razonamiento, "+critText(at.crit)+". "+
+   "Calificó su disfrute con "+at.enjoy+" de 5 y la dificultad con "+at.diff+" de 5. Es una lectura exploratoria que gana valor al compararla con las otras simulaciones.";
+}
+function bars(labels,vals){
+  return labels.map(function(l,i){var v=Math.max(0,Math.min(1,vals[i]));return '<div class="bar"><div class="l"><span>'+l+'</span><span class="lvl">'+level(v)+'</span></div><div class="t"><div class="f" style="width:'+Math.max(4,Math.round(v*100))+'%"></div></div></div>'}).join("");
+}
+function axesHtml(axes){
+  return AX.map(function(a,i){var v=Math.max(-1,Math.min(1,axes[i]));return '<div class="axis"><div class="nm">'+a.name+'</div><div class="track"><span class="dot" style="left:'+((v+1)/2*100)+'%"></span></div><div class="poles"><span>'+a.neg[0].toUpperCase()+a.neg.slice(1)+'</span><span style="text-align:right">'+a.pos[0].toUpperCase()+a.pos.slice(1)+'</span></div></div>'}).join("");
+}
+
+function simReport(s,at){
+  var t=topDims(s,at);
+  return "CAREER LAB | "+s.title.toUpperCase()+"\nParticipante: "+S.name+"\nFecha: "+fdate(at.date)+"\nDuración: "+Math.max(1,Math.round(at.secs/60))+" min\n\n"+
+   "CAREER DNA DE LA SIMULACIÓN\n"+s.dims.map(function(d,i){return "  "+d+": "+level(at.norm[i])}).join("\n")+
+   "\n\nDimensiones predominantes: "+s.dims[t[0][1]]+" y "+s.dims[t[1][1]]+
+   "\n\nDECISIONES\n"+at.choices.map(function(c,i){return "  "+(i+1)+". "+c.tag+": "+c.t+" ("+Math.round(c.ms/1000)+" s)"}).join("\n")+
+   "\n\nDisfrute: "+at.enjoy+"/5   Dificultad percibida: "+at.diff+"/5"+
+   (at.note?"\nLa decisión que más le costó: "+at.note:"")+
+   "\n\nINTERPRETACIÓN\n"+simInterp(s,at,S.name)+"\n\nNota: resultado exploratorio; no es un diagnóstico vocacional.";
+}
+
+function viewResult(s,at,official){
+  var t=topDims(s,at),rep=simReport(s,at);
+  mount('<section class="panel"><div class="tag">Resultado'+(official?"":" de práctica")+'</div><h2>'+esc(S.name)+' en '+s.title+'</h2><p class="muted small">'+fdate(at.date)+'. Mira el patrón, no un número aislado.</p></section>'+
+   '<section class="panel"><h3>Career DNA de esta simulación</h3><p class="small muted">Qué tanto aparecieron estas dimensiones en tus decisiones, comparado con el máximo posible en esta simulación. Una dimensión "menor" no es una debilidad: significa que elegiste otros caminos.</p>'+bars(s.dims,at.norm)+'</section>'+
+   '<section class="panel"><h3>Lectura</h3><p class="interp">'+esc(simInterp(s,at,S.name))+'</p></section>'+
+   '<section class="panel"><h3>Tu estilo en esta simulación</h3>'+axesHtml(at.axes)+'</section>'+
+   '<section class="panel"><h3>Tus decisiones</h3><ol class="dlist">'+at.choices.map(function(c){return '<li><b>'+esc(c.t)+'</b><br><small>'+c.tag+', '+Math.round(c.ms/1000)+' segundos</small></li>'}).join("")+'</ol>'+
+   (at.note?'<p class="small" style="margin-top:12px"><b>Lo que más te costó:</b> '+esc(at.note)+'</p>':'')+'</section>'+
+   shareBlock(rep,"sim")+
+   '<button class="btn full noprint" id="home" type="button">Volver a Career Lab</button>');
+  wireShare(rep,"Career Lab | "+s.title+" | "+S.name);
+  on("home",viewHome);
+}
+
+function shareBlock(){
+  return '<p class="printonly small" style="word-break:break-all">Código de respaldo para recuperar el avance en Career Lab: '+exportCode()+'</p>'+'<section class="panel noprint"><h3>Guardar el reporte</h3><p class="small muted">Se abrirá la ventana de impresión. En el celular, elige «Guardar como PDF» o «Imprimir» y luego compartir.</p>'+
+   '<button class="btn full" id="print" type="button">Guardar como PDF</button><p class="small muted" id="snote"></p></section>';
+}
+function wireShare(){
+  on("print",function(){try{window.print()}catch(e){document.getElementById("snote").textContent="La impresión no está disponible en esta vista. Abre el sitio directamente en el navegador."}});
+}
+
+/* ============ MAESTRO ============ */
+function master(){
+  var M={sims:[],caps:{},axes:[0,0,0,0,0],axSims:[[],[],[],[],[]]};
+  var capAcc={};
+  SIMS.forEach(function(s){
+    var a=first(s.id);if(!a)return;
+    var crit=(a.crit[0]+a.crit[1])/4,interest=(a.enjoy-1)/4;
+    M.sims.push({s:s,a:a,crit:crit,interest:interest,signal:.55*interest+.45*crit});
+    s.caps.forEach(function(c,i){(capAcc[c]=capAcc[c]||[]).push(a.norm[i])});
+    a.axes.forEach(function(v,j){M.axSims[j].push({s:s,v:v})});
+  });
+  Object.keys(CAP).forEach(function(c){var v=capAcc[c]||[0];M.caps[c]=v.reduce(function(x,y){return x+y},0)/v.length});
+  M.axes=M.axSims.map(function(l){return l.reduce(function(x,y){return x+y.v},0)/l.length});
+  M.spread=M.axSims.map(function(l){var vs=l.map(function(x){return x.v});return Math.max.apply(null,vs)-Math.min.apply(null,vs)});
+  var bySim={};M.sims.forEach(function(x){bySim[x.s.id]=x});M.by=bySim;
+  M.fams=FAMILIES.map(function(f){
+    var tw=0,acc=0;Object.keys(f.s).forEach(function(id){tw+=f.s[id];acc+=f.s[id]*bySim[id].signal});
+    var ak=Object.keys(f.a),fit=ak.reduce(function(x,k){var j=AX.map(function(a){return a.k}).indexOf(k);return x+(f.a[k]*M.axes[j]+1)/2},0)/ak.length;
+    return {f:f,score:.8*acc/tw+.2*fit,core:Object.keys(f.s).sort(function(a,b){return f.s[b]-f.s[a]})};
+  }).sort(function(a,b){return b.score-a.score});
+  return M;
+}
+function famEvidence(x,M){
+  var main=M.by[x.core[0]],bits=[];
+  bits.push("En "+main.s.title+" calificó su disfrute con "+main.a.enjoy+" de 5 y, en las dos situaciones con trampa de razonamiento, "+critText(main.a.crit));
+  var others=x.core.slice(1).map(function(id){return M.by[id]}).filter(function(o){return o.signal>=.6});
+  if(others.length)bits.push("la señal se repite en "+others.map(function(o){return o.s.title}).join(" y "));
+  var ak=Object.keys(x.f.a),match=ak.filter(function(k){var j=AX.map(function(a){return a.k}).indexOf(k);return x.f.a[k]*M.axes[j]>=.2});
+  if(match.length)bits.push("y su estilo tiende a "+match.map(function(k){var j=AX.map(function(a){return a.k}).indexOf(k);return x.f.a[k]>0?AX[j].pos:AX[j].neg}).join(" y "));
+  return bits.join("; ")+".";
+}
+function quad(M){
+  var Q=[[],[],[],[]];
+  M.sims.forEach(function(x){var hi=x.a.enjoy>=4,hc=x.crit>=.75;Q[hc?(hi?1:0):(hi?3:2)].push(x)});
+  var lab=["Criterio sólido, interés moderado o bajo","Le atrae y razona con solidez","Ni interés ni criterio marcados por ahora","Le atrae, criterio por desarrollar"];
+  return '<div class="quad">'+Q.map(function(l,i){return '<div class="q q'+i+'"><div class="ql">'+lab[i]+'</div>'+(l.length?l.map(function(x){return '<div class="qi"><b>'+x.s.title+'</b><span>interés '+x.a.enjoy+'/5, criterio '+(x.a.crit[0]+x.a.crit[1])+'/4</span></div>'}).join(""):'<div class="qe">Ninguna</div>')+'</div>'}).join("")+'</div>'+
+   '<div class="qaxis"><span>Menos interés</span><span>Más interés</span></div>';
+}
+function viewMaster(){
+  var M=master(),name=S.name;
+  var capKeys=Object.keys(CAP).sort(function(a,b){return M.caps[b]-M.caps[a]});
+  var liked=M.sims.slice().sort(function(a,b){return b.a.enjoy-a.a.enjoy||b.crit-a.crit}).slice(0,3);
+  var flags=[];
+  M.sims.forEach(function(x){
+    if(x.crit>=.75&&x.a.enjoy<=2)flags.push("En "+x.s.title+" resolvió bien las trampas de razonamiento, pero dijo disfrutarlo poco ("+x.a.enjoy+"/5). Hay capacidad sin entusiasmo; vale la pena preguntarle qué no le gustó.");
+    if(x.a.enjoy>=4&&x.crit<=.25)flags.push("En "+x.s.title+" mostró mucho interés ("+x.a.enjoy+"/5), aunque en las trampas se inclinó por respuestas intuitivas. Es un área que le atrae y donde aprender algunas herramientas podría marcar diferencia.");
+  });
+  M.spread.map(function(sp,j){return [sp,j]}).sort(function(a,b){return b[0]-a[0]}).slice(0,2).forEach(function(p){var sp=p[0],j=p[1];
+    if(sp>=1.2){var l=M.axSims[j].slice().sort(function(a,b){return a.v-b.v});flags.push("Su estilo en «"+AX[j].name.toLowerCase()+"» cambia según el contexto: en "+l[l.length-1].s.title+" tendió a "+AX[j].pos+", mientras que en "+l[0].s.title+" tendió a "+AX[j].neg+". Adaptar el estilo al problema puede ser una fortaleza.")}
+  });
+  var rie=M.axes[1],riskTxt=rie>=.25?"En conjunto tendió a apostar por el potencial, aceptando incertidumbre cuando veía una oportunidad.":rie<=-.25?"En conjunto tendió a proteger lo que ya existe y a limitar la exposición antes de arriesgar.":"Frente al riesgo no mostró una inclinación fija: en unos casos protegió, en otros apostó.";
+  var top3=M.fams.slice(0,4);
+  var totalMin=Math.round(M.sims.reduce(function(x,y){return x+y.a.secs},0)/60);
+  var questions=[
+    "¿Qué tuvieron en común las simulaciones que más disfrutaste ("+liked.map(function(x){return x.s.title}).join(", ")+")?",
+    "Cuando elegiste "+(M.axes[0]>=0?"analizar antes de actuar":"actuar rápido")+", ¿qué te hizo sentir más seguro de esa decisión?",
+    "De los campos que aparecen abajo, ¿cuál te da curiosidad conocer por dentro, con una visita o una conversación con alguien que trabaje ahí?"
+  ];
+
+  var rep="CAREER LAB | MASTER REPORT\nParticipante: "+name+"\nFecha: "+fdate(new Date().toISOString())+"\nSimulaciones completadas: 10 de 10 ("+totalMin+" min en total)\n\n"+
+   "CAPACIDADES QUE MÁS APARECIERON\n"+capKeys.slice(0,4).map(function(c){return "  "+CAP[c]+": "+level(M.caps[c])}).join("\n")+
+   "\n\nESTILO DE DECISIÓN\n"+AX.map(function(a,i){var v=M.axes[i];return "  "+a.name+": "+(Math.abs(v)<.2?"equilibrado":(v>0?a.pos:a.neg))}).join("\n")+
+   "\n\nINTERÉS Y CRITERIO POR SIMULACIÓN\n"+M.sims.map(function(x){return "  "+x.s.title+": disfrute "+x.a.enjoy+"/5, criterio "+(x.a.crit[0]+x.a.crit[1])+"/4"}).join("\n")+
+   "\n\nRIESGO\n  "+riskTxt+
+   (flags.length?"\n\nPATRONES QUE MERECEN CONVERSACIÓN\n"+flags.map(function(f){return "  "+f}).join("\n"):"")+
+   "\n\nCAMPOS QUE VALE LA PENA EXPLORAR\n"+top3.map(function(x){return "  "+x.f.n+"\n    Evidencia: "+famEvidence(x,M)+"\n    Opciones académicas relacionadas: "+x.f.acad}).join("\n")+
+   "\n\nEste reporte resume patrones observados en diez simulaciones. No es un diagnóstico psicométrico ni una recomendación de carrera; es una base para conversar y explorar.";
+
+  mount(
+   '<section class="panel hero"><div class="tag">Career DNA Maestro</div><h1 style="font-size:clamp(30px,7vw,46px)">'+esc(name)+'</h1><p class="lede">Integración de diez simulaciones. Lo valioso aquí no es ningún número, sino lo que se repite, lo que cambia y lo que sorprende.</p></section>'+
+   '<section class="panel"><h3>Mapa de interés y criterio</h3><p class="small muted">Cada simulación ubicada según cuánto la disfrutó (4 o 5 cuenta como alto) y cuántas trampas de razonamiento reconoció (3 o 4 de 4 cuenta como alto). Arriba, más criterio; a la derecha, más interés.</p>'+quad(M)+'</section>'+
+   '<section class="panel"><h3>Capacidades que más aparecieron</h3><p class="small muted">Agrupan las 60 dimensiones de las simulaciones en siete capacidades transversales.</p>'+bars(capKeys.map(function(c){return CAP[c]}),capKeys.map(function(c){return M.caps[c]}))+
+   '<p style="margin-top:14px">Sus decisiones sugieren una preferencia por '+capKeys.slice(0,3).map(function(c){return CAPVERB[c]}).join(", ").replace(/, ([^,]*)$/," y $1")+'.</p></section>'+
+   '<section class="panel"><h3>Estilo de decisión</h3>'+axesHtml(M.axes)+'<p>'+esc(riskTxt)+'</p></section>'+
+   '<section class="panel"><h3>Tipo de problemas que más disfrutó</h3><p>'+liked.map(function(x){return '<b>'+x.s.title+'</b> ('+x.a.enjoy+'/5)'}).join(", ")+'. Si estas simulaciones comparten algo, por ejemplo números, personas, tecnología o competencia, esa es una pista más fuerte que cualquier puntaje.</p></section>'+
+   (flags.length?'<section class="panel"><h3>Patrones que merecen conversación</h3>'+flags.map(function(f){return '<div class="flag">'+esc(f)+'</div>'}).join("")+'</section>':'')+
+   '<section class="panel"><h3>Campos que vale la pena explorar</h3><p class="small muted">Del perfil de pensamiento al campo profesional y luego a opciones académicas. Son hipótesis para investigar, no recomendaciones.</p>'+
+    top3.map(function(x){return '<div class="fam"><h3>'+x.f.n+'</h3><p class="small">'+esc(famEvidence(x,M))+'</p><p class="acad">Opciones académicas relacionadas: '+x.f.acad+'</p></div>'}).join("")+'</section>'+
+   '<section class="panel"><h3>Para conversar en casa</h3><ol class="dlist">'+questions.map(function(q){return '<li>'+esc(q)+'</li>'}).join("")+'</ol>'+
+    '<p class="small muted" style="margin-top:12px">Career Lab explora diez campos elegidos por su demanda esperada hacia 2030. No cubre derecho, educación, ciencias sociales, artes escénicas ni otros campos; un interés bajo en todas las simulaciones también es información útil.</p></section>'+
+   shareBlock(rep)+
+   '<button class="btn full noprint" id="home" type="button">Volver a Career Lab</button>');
+  wireShare(rep,"Career Lab | Master Report | "+name);
+  on("home",viewHome);
+}
+
+function viewGuide(){
+  mount('<section class="panel hero"><div class="tag">Guía para padres y orientadores</div><h2>Cómo leer Career Lab</h2>'+
+  '<p class="body">Career Lab no pregunta qué carrera le gusta al participante. Lo pone en diez situaciones profesionales simuladas y observa cómo decide. Cada simulación tiene cinco decisiones y produce tres señales distintas, que conviene leer juntas.</p></section>'+
+  '<section class="panel"><h3>1. Career DNA: hacia dónde se inclinan sus decisiones</h3><p>Tres de cada cinco situaciones son dilemas donde todas las opciones son razonables y cada una sacrifica algo: rentabilidad frente a riesgo, velocidad frente a precisión, personas frente a números. Estas decisiones no se califican como buenas o malas; alimentan seis dimensiones propias de cada dominio y cinco ejes de estilo que se comparan entre simulaciones.</p></section>'+
+  '<section class="panel"><h3>2. Criterio: en qué razona con más solidez</h3><p>Las otras dos situaciones de cada simulación contienen una trampa de razonamiento conocida, como confundir correlación con causa, dejarse llevar por lo ya gastado o leer mal un promedio. Estas sí distinguen entre un razonamiento más sólido y uno más intuitivo, y son la mejor aproximación a la pregunta de en qué es bueno. Con dos situaciones por dominio, la señal es orientativa; lo que importa es si se repite.</p></section>'+
+  '<section class="panel"><h3>3. Interés: qué disfruta</h3><p>Al cerrar cada simulación el participante indica cuánto la disfrutó y qué tan difícil le resultó. El reporte maestro cruza interés con criterio: lo más prometedor está donde ambos coinciden, y las diferencias, por ejemplo capacidad sin entusiasmo, son una buena puerta para conversar.</p></section>'+
+  '<section class="panel"><h3>Recomendaciones de uso</h3><p>Conviene hacer una o dos simulaciones por sesión, sin ayuda y sin presión de tiempo real. El primer intento es el que cuenta para el reporte maestro, porque es el más espontáneo. Evite comentar cuál opción parece mejor mientras juega. Al terminar, use el reporte como punto de partida para conversar, visitar lugares de trabajo o hablar con profesionales de los campos que aparezcan.</p>'+
+  '<p>Los resultados se guardan solo en el navegador del dispositivo donde se hicieron. Si se borra el historial o se cambia de dispositivo, se pierden; por eso cada reporte se puede compartir o imprimir.</p>'+
+  '<p class="small muted">Los diez campos se eligieron por su perspectiva de demanda hacia 2030 y su menor exposición a ser reemplazados por completo por la IA, tomando como referencia el Future of Jobs Report 2025 del Foro Económico Mundial. Career Lab v3 es una herramienta exploratoria y no una prueba psicométrica validada. Sus pesos se irán calibrando con las primeras aplicaciones.</p></section>'+
+  '<button class="btn full" id="back" type="button">Volver</button>');
+  on("back",function(){S.name?viewHome():viewWelcome()});
+}
+
+
+viewWelcome();
+})();
+</script>
+</body>
+</html>
